@@ -37,7 +37,7 @@ def _sentence_with_translations_to_str(
 
 def _save_sentences_with_translations_to_dir(
         sentences_with_translations: Iterable[Tuple[str, List[str]]],
-        directory: str, file_name: str, limit: int) -> None:
+        directory: str, file_name: str, limit: int = None) -> None:
     sentences_with_translations_slice = itertools.islice(
         sentences_with_translations, limit)
     stanzas = (_sentence_with_translations_to_str(swt)
@@ -47,7 +47,7 @@ def _save_sentences_with_translations_to_dir(
 
 
 def _save_imgs_to_dir(img_ext_tuples: Iterable[Tuple[str, str]],
-                      directory: str, limit: int) -> None:
+                      directory: str, limit: int = None) -> None:
     img_ext_tuples_slice = itertools.islice(img_ext_tuples, limit)
     for i, (img, ext) in enumerate(img_ext_tuples_slice):
         file_name = '{}.{}'.format(i, ext)
@@ -55,18 +55,15 @@ def _save_imgs_to_dir(img_ext_tuples: Iterable[Tuple[str, str]],
 
 
 def _save_mp3s_to_dir(mp3s: Iterable[bytes], directory: str,
-                      limit: int) -> None:
+                      limit: int = None) -> None:
     mp3s_slice = itertools.islice(mp3s, limit)
     for i, mp3 in enumerate(mp3s_slice):
         file_name = '{}.mp3'.format(i)
         _save_bin_file(mp3, directory, file_name)
 
 
-def _run(query: str,
-         directory: str,
-         num_example_sentences: int = 3,
-         num_images: int = 5,
-         num_pronunciations: int = 5) -> None:
+def _run(query: str, directory: str, num_example_sentences: int = None,
+         num_images: int = None, num_pronunciations: int = None) -> None:
     translation = google_translate.query(query)
     _save_txt_file(translation, directory, 'translation.txt')
 
