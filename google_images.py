@@ -9,7 +9,7 @@ import soups
 
 def _get_query_url(query: str) -> str:
     encoded_query = '+'.join(query.split())
-    return 'https://www.google.com/search?q={}&tbm=isch'.format(encoded_query)
+    return 'https://www.google.com.mx/search?q={}&tbm=isch'.format(encoded_query)
 
 
 def _extract_image_urls(soup: bs4.BeautifulSoup) -> Iterable[Tuple[str, str]]:

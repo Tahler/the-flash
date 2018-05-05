@@ -5,7 +5,7 @@ from typing import List, Iterable, Tuple
 import soups
 
 _QUERY_URL_FMT = (
-    'https://tatoeba.org/eng/sentences/search?from=eng&to=spa&query={}')
+    'https://tatoeba.org/eng/sentences/search?from=spa&to=eng&query={}')
 
 
 def _get_query_url(query: str) -> str:

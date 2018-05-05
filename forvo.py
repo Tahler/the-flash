@@ -11,7 +11,7 @@ PATTERN = re.compile(r'Play\((.*)\)')
 
 def _get_query_url(query: str) -> str:
     encoded_query = '%20'.join(query.split())
-    return 'https://forvo.com/search/{}'.format(encoded_query)
+    return 'https://forvo.com/search/{}/es'.format(encoded_query)
 
 
 def _extract_play_id(on_click_play_call: str) -> Optional[str]:

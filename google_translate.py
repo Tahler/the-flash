@@ -10,7 +10,7 @@ def _get_query_url(query: str, source_lang: str, target_lang: str) -> str:
                 source_lang, target_lang, encoded_query)
 
 
-def query(text: str, source_lang: str = 'en', target_lang: str = 'es') -> str:
+def query(text: str, source_lang: str = 'es', target_lang: str = 'en') -> str:
     """Returns the translation from source_lang to target_lang for text."""
     url = _get_query_url(text, source_lang, target_lang)
     response = requests.get(url, headers=consts.REQUEST_HEADER)
