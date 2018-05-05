@@ -7,7 +7,7 @@ def _get_query_url(query: str, source_lang: str, target_lang: str) -> str:
     encoded_query = '%20'.join(query.split())
     return ('https://translate.googleapis.com/translate_a/single'
             '?client=gtx&dt=t&sl={}&tl={}&q={}').format(
-                source_lang, target_lang, query)
+                source_lang, target_lang, encoded_query)
 
 
 def query(text: str, source_lang: str = 'en', target_lang: str = 'es') -> str:
