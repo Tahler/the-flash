@@ -37,7 +37,9 @@ def _sentence_with_translations_to_str(
 
 def _save_sentences_with_translations_to_dir(
         sentences_with_translations: Iterable[Tuple[str, List[str]]],
-        directory: str, file_name: str, limit: int = None) -> None:
+        directory: str,
+        file_name: str,
+        limit: int = None) -> None:
     sentences_with_translations_slice = itertools.islice(
         sentences_with_translations, limit)
     stanzas = (_sentence_with_translations_to_str(swt)
@@ -47,7 +49,8 @@ def _save_sentences_with_translations_to_dir(
 
 
 def _save_imgs_to_dir(img_ext_tuples: Iterable[Tuple[str, str]],
-                      directory: str, limit: int = None) -> None:
+                      directory: str,
+                      limit: int = None) -> None:
     img_ext_tuples_slice = itertools.islice(img_ext_tuples, limit)
     for i, (img, ext) in enumerate(img_ext_tuples_slice):
         file_name = '{}.{}'.format(i, ext)
@@ -62,8 +65,11 @@ def _save_mp3s_to_dir(mp3s: Iterable[bytes], directory: str,
         _save_bin_file(mp3, directory, file_name)
 
 
-def _run(query: str, directory: str, num_example_sentences: int = None,
-         num_images: int = None, num_pronunciations: int = None) -> None:
+def run_query(query: str,
+              directory: str,
+              num_example_sentences: int = None,
+              num_images: int = None,
+              num_pronunciations: int = None) -> None:
     translation = google_translate.query(query)
     _save_txt_file(translation, directory, 'translation.txt')
 
@@ -79,10 +85,28 @@ def _run(query: str, directory: str, num_example_sentences: int = None,
     _save_mp3s_to_dir(mp3s, directory, num_pronunciations)
 
 
+def run_queries(queries: Iterable[str],
+                directory: str,
+                num_example_sentences: int = None,
+                num_images: int = None,
+                num_pronunciations: int = None) -> None:
+    for query in queries:
+        underscored_query = query.replace(' ', '_')
+        query_dir = os.path.join(directory, underscored_query)
+        run_query(query, query_dir, num_example_sentences, num_images,
+                  num_pronunciations)
+
+
+def get_lines(file_name: str) -> Iterable[str]:
+    with open(file_name, 'r') as f:
+        return f.readlines()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description='Scrape the web to help make Anki flash cards.')
-    parser.add_argument('search', type=str, help='the search query')
+    parser.add_argument(
+        'word_list', type=str, help='file with words separated by line')
     parser.add_argument(
         '--num_example_sentences',
         default=1,
@@ -102,8 +126,10 @@ def main() -> None:
         type=str,
         help='directory to contain the scraped results')
     args = parser.parse_args()
-    _run(args.search, args.directory, args.num_example_sentences,
-         args.num_images, args.num_pronunciations)
+
+    lines = get_lines(args.word_list)
+    run_queries(lines, args.directory, args.num_example_sentences,
+                args.num_images, args.num_pronunciations)
 
 
 if __name__ == '__main__':
