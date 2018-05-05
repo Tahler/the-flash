@@ -6,7 +6,7 @@ from typing import Iterable, Optional
 
 import soups
 
-PATTERN = re.compile('Play\((.*)\)')
+PATTERN = re.compile(r'Play\((.*)\)')
 
 
 def _get_query_url(query: str) -> str:
