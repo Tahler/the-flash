@@ -36,7 +36,7 @@ def _extract_sentences_with_translations(
     return sentences_with_translations
 
 
-def query(query: str) -> Iterable[Tuple[str, List[str]]]:
+async def query(query: str) -> Iterable[Tuple[str, List[str]]]:
     """Returns a generator of (sentence, translations)."""
     url = _get_query_url(query)
     soup = soups.get(url)

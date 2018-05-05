@@ -24,7 +24,7 @@ def _get_raw_image(url: str) -> bytes:
     return response.content
 
 
-def query(query: str) -> Iterable[Tuple[bytes, str]]:
+async def query(query: str) -> Iterable[Tuple[bytes, str]]:
     """Returns a generator of (raw_image, extension) for the query."""
     url = _get_query_url(query)
     soup = soups.get(url)

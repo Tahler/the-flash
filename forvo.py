@@ -46,10 +46,10 @@ def _get_mp3(url: str) -> bytes:
     return response.content
 
 
-def query(query: str) -> Iterable[bytes]:
+async def query(query: str) -> Iterable[bytes]:
     """Returns a generator of raw MP3 data for query from Forvo."""
     url = _get_query_url(query)
-    soup = soups.get(url)
+    await soup = soups.get(url)
     urls = _extract_mp3_urls(soup)
     mp3s = (_get_mp3(url) for url in urls)
     return mp3s
