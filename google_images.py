@@ -2,13 +2,14 @@ import bs4
 import json
 import requests
 from typing import Iterable, Tuple
+from urllib import parse
 
 import consts
 import soups
 
 
 def _get_query_url(query: str) -> str:
-    encoded_query = '+'.join(query.split())
+    encoded_query = parse.quote(query)
     return 'https://www.google.com.mx/search?q={}&tbm=isch'.format(encoded_query)
 
 

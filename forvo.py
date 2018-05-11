@@ -3,6 +3,7 @@ import bs4
 import re
 import requests
 from typing import Iterable, Optional
+from urllib import parse
 
 import soups
 
@@ -10,7 +11,7 @@ PATTERN = re.compile(r'Play\((.*)\)')
 
 
 def _get_query_url(query: str) -> str:
-    encoded_query = '%20'.join(query.split())
+    encoded_query = parse.quote(query)
     return 'https://forvo.com/search/{}/es'.format(encoded_query)
 
 

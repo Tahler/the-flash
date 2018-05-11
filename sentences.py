@@ -1,6 +1,7 @@
 import bs4
 import requests
 from typing import List, Iterable, Tuple
+from urllib import parse
 
 import soups
 
@@ -9,7 +10,7 @@ _QUERY_URL_FMT = (
 
 
 def _get_query_url(query: str) -> str:
-    encoded_query = '+'.join(query.split())
+    encoded_query = parse.quote(query)
     return _QUERY_URL_FMT.format(encoded_query)
 
 
