@@ -7,90 +7,89 @@ from typing import Any, List, Iterable, Tuple
 
 import forvo
 import google_images
+import html_doc
 import sentences
+
+WORDS_PER_HTML_DOCUMENT = 100
 
 
 def _save_file(open_mode: str, content: Any, directory: str,
-               file_name: str) -> None:
+               file_name: str) -> os.PathLike:
     if not os.path.exists(directory):
         os.makedirs(directory)
     path = os.path.join(directory, file_name)
     with open(path, open_mode) as f:
         f.write(content)
+    return path
 
 
-def _save_txt_file(content: str, directory: str, file_name: str) -> None:
-    _save_file('w+', content, directory, file_name)
+def _save_txt_file(content: str, directory: str,
+                   file_name: str) -> os.PathLike:
+    return _save_file('w+', content, directory, file_name)
 
 
-def _save_bin_file(content: bytes, directory: str, file_name: str) -> None:
-    _save_file('wb+', content, directory, file_name)
-
-
-def _sentence_with_translations_to_str(
-        sentence_with_translation: Tuple[str, List[str]]) -> str:
-    sentence, translations = sentence_with_translation
-    stanza = '{}\n'.format(sentence) + '\n'.join(translations)
-    return stanza
-
-
-def _save_sentences_with_translations_to_dir(
-        sentences_with_translations: Iterable[Tuple[str, List[str]]],
-        directory: str,
-        file_name: str,
-        limit: int = None) -> None:
-    sentences_with_translations_slice = itertools.islice(
-        sentences_with_translations, limit)
-    stanzas = (_sentence_with_translations_to_str(swt)
-               for swt in sentences_with_translations_slice)
-    content = '\n\n'.join(stanzas)
-    _save_txt_file(content, directory, file_name)
+def _save_bin_file(content: bytes, directory: str,
+                   file_name: str) -> os.PathLike:
+    return _save_file('wb+', content, directory, file_name)
 
 
 def _save_imgs_to_dir(img_ext_tuples: Iterable[Tuple[str, str]],
-                      directory: str,
-                      limit: int = None) -> None:
-    img_ext_tuples_slice = itertools.islice(img_ext_tuples, limit)
-    for i, (img, ext) in enumerate(img_ext_tuples_slice):
+                      directory: str) -> Iterable[os.PathLike]:
+    for i, (img, ext) in enumerate(img_ext_tuples):
         file_name = '{}.{}'.format(i, ext)
-        _save_bin_file(img, directory, file_name)
+        yield _save_bin_file(img, directory, file_name)
 
 
-def _save_mp3s_to_dir(mp3s: Iterable[bytes], directory: str,
-                      limit: int = None) -> None:
-    mp3s_slice = itertools.islice(mp3s, limit)
-    for i, mp3 in enumerate(mp3s_slice):
+def _save_mp3s_to_dir(mp3s: Iterable[bytes],
+                      directory: str) -> Iterable[os.PathLike]:
+    for i, mp3 in enumerate(mp3s):
         file_name = '{}.mp3'.format(i)
-        _save_bin_file(mp3, directory, file_name)
+        yield _save_bin_file(mp3, directory, file_name)
 
 
 def run_query(query: str,
               directory: str,
               num_example_sentences: int = None,
               num_images: int = None,
-              num_pronunciations: int = None) -> None:
+              num_pronunciations: int = None) -> html_doc.Word:
     sentences_with_translations = sentences.query(query)
-    _save_sentences_with_translations_to_dir(sentences_with_translations,
-                                             directory, 'sentences.txt',
-                                             num_example_sentences)
+    sentences_with_translations_slice = itertools.islice(
+        sentences_with_translations, num_example_sentences)
+    sentences_iter = (t[0] for t in sentences_with_translations_slice)
 
     img_ext_tuples = google_images.query(query)
-    _save_imgs_to_dir(img_ext_tuples, directory, num_images)
+    img_ext_tuples_slice = itertools.islice(img_ext_tuples, num_images)
+    img_paths = _save_imgs_to_dir(img_ext_tuples_slice, directory)
 
     mp3s = forvo.query(query)
-    _save_mp3s_to_dir(mp3s, directory, num_pronunciations)
+    mp3s_slice = itertools.islice(mp3s, num_pronunciations)
+    mp3_paths = _save_mp3s_to_dir(mp3s_slice, directory)
+
+    links = [
+        ('Images', google_images._get_query_url(query)),
+        ('Pronunciations', forvo._get_query_url(query)),
+        ('Sentences', sentences._get_query_url(query)),
+    ]
+
+    return html_doc.Word(
+        word=query,
+        links=links,
+        image_paths=img_paths,
+        mp3_paths=mp3_paths,
+        sentences=sentences_iter)
 
 
 def run_queries(queries: Iterable[str],
                 directory: str,
                 num_example_sentences: int = None,
                 num_images: int = None,
-                num_pronunciations: int = None) -> None:
+                num_pronunciations: int = None) -> Iterable[html_doc.Word]:
     for query in queries:
         underscored_query = query.replace(' ', '_')
         query_dir = os.path.join(directory, underscored_query)
-        run_query(query, query_dir, num_example_sentences, num_images,
-                  num_pronunciations)
+        word = run_query(query, query_dir, num_example_sentences, num_images,
+                         num_pronunciations)
+        yield word
 
 
 def get_lines(file_name: str) -> Iterable[str]:
@@ -124,8 +123,23 @@ def main() -> None:
     args = parser.parse_args()
 
     lines = get_lines(args.word_list)
-    run_queries(lines, args.directory, args.num_example_sentences,
-                args.num_images, args.num_pronunciations)
+    words = run_queries(lines, args.directory, args.num_example_sentences,
+                        args.num_images, args.num_pronunciations)
+
+    buffered_words = []
+    for i, word in enumerate(words):
+        buffered_words.append(word)
+        if (i + 1) % WORDS_PER_HTML_DOCUMENT == 0:
+            first_buffered_word_index = i + 1 - len(buffered_words)
+            file_name = '{}-{}.html'.format(first_buffered_word_index, i)
+            html_str = html_doc.render(buffered_words)
+            _save_txt_file(html_str, args.directory, file_name)
+            buffered_words = []
+
+    html_str = html_doc.render(buffered_words)
+    file_name = '{}-{}.html'.format(
+        len(words) - len(buffered_words), len(buffered_words))
+    _save_txt_file(html_str, args.directory, file_name)
 
 
 if __name__ == '__main__':
