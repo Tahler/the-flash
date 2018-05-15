@@ -95,7 +95,7 @@ def run_queries(queries: Iterable[str],
 
 def get_lines(file_name: str) -> Iterable[str]:
     with open(file_name, 'r') as f:
-        return f.readlines()
+        return (line.strip() for line in f.readlines())
 
 
 def main() -> None:
