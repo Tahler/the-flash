@@ -7,7 +7,6 @@ from typing import Any, List, Iterable, Tuple
 
 import forvo
 import google_images
-import google_translate
 import sentences
 
 
@@ -70,9 +69,6 @@ def run_query(query: str,
               num_example_sentences: int = None,
               num_images: int = None,
               num_pronunciations: int = None) -> None:
-    translation = google_translate.query(query)
-    _save_txt_file(translation, directory, 'translation.txt')
-
     sentences_with_translations = sentences.query(query)
     _save_sentences_with_translations_to_dir(sentences_with_translations,
                                              directory, 'sentences.txt',
