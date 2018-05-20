@@ -79,11 +79,12 @@ def run_query(query: str,
         sentences=sentences_iter)
 
 
-def run_queries(queries: Iterable[str],
-                directory: str,
-                num_example_sentences: int = None,
-                num_images: int = None,
-                num_pronunciations: int = None) -> Iterable[html_doc.Word]:
+def words_for_queries(
+        queries: Iterable[str],
+        directory: str,
+        num_example_sentences: int = None,
+        num_images: int = None,
+        num_pronunciations: int = None) -> Iterable[html_doc.Word]:
     for query in queries:
         underscored_query = query.replace(' ', '_')
         query_dir = os.path.join(directory, underscored_query)
@@ -95,6 +96,35 @@ def run_queries(queries: Iterable[str],
 def get_lines(file_name: str) -> Iterable[str]:
     with open(file_name, 'r') as f:
         return (line.strip() for line in f.readlines())
+
+
+def _save_words_as_html(words: List[html_doc.Word], directory: os.PathLike,
+                        file_name: os.PathLike) -> None:
+    html_str = html_doc.render(words)
+    _save_txt_file(html_str, directory, file_name)
+
+
+def _save_words_as_html_in_chunks(words: Iterable[html_doc.Word],
+                                  directory: os.PathLike) -> None:
+    i = 0
+    last_flushed_index = i
+    get_file_name = lambda: '{}-{}.html'.format(last_flushed_index, i - 1)
+
+    buffered_words = []
+    try:
+        for word in words:
+            i += 1
+            buffered_words.append(word)
+
+            should_flush = i % WORDS_PER_HTML_DOCUMENT == 0
+            if should_flush:
+                _save_words_as_html(buffered_words, directory, get_file_name())
+
+                last_flushed_index = i
+                buffered_words = []
+
+    finally:
+        _save_words_as_html(buffered_words, directory, get_file_name())
 
 
 def main() -> None:
@@ -123,23 +153,10 @@ def main() -> None:
     args = parser.parse_args()
 
     lines = get_lines(args.word_list)
-    words = run_queries(lines, args.directory, args.num_example_sentences,
-                        args.num_images, args.num_pronunciations)
-
-    buffered_words = []
-    for i, word in enumerate(words):
-        buffered_words.append(word)
-        if (i + 1) % WORDS_PER_HTML_DOCUMENT == 0:
-            first_buffered_word_index = i + 1 - len(buffered_words)
-            file_name = '{}-{}.html'.format(first_buffered_word_index, i)
-            html_str = html_doc.render(buffered_words)
-            _save_txt_file(html_str, args.directory, file_name)
-            buffered_words = []
-
-    html_str = html_doc.render(buffered_words)
-    file_name = '{}-{}.html'.format(
-        len(words) - len(buffered_words), len(buffered_words))
-    _save_txt_file(html_str, args.directory, file_name)
+    words = words_for_queries(lines, args.directory,
+                              args.num_example_sentences, args.num_images,
+                              args.num_pronunciations)
+    _save_words_as_html_in_chunks(words, args.directory)
 
 
 if __name__ == '__main__':
