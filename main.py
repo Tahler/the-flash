@@ -13,8 +13,14 @@ import sentences
 WORDS_PER_HTML_DOCUMENT = 100
 
 
+def _remove_special_chars(s: str) -> str:
+    return s.encode('ascii', 'ignore').decode('utf-8')
+
+
 def _save_file(open_mode: str, content: Any, directory: str,
                file_name: str) -> os.PathLike:
+    directory = _remove_special_chars(directory)
+    file_name = _remove_special_chars(file_name)
     if not os.path.exists(directory):
         os.makedirs(directory)
     path = os.path.join(directory, file_name)
