@@ -37,6 +37,7 @@ HTML_TEMPLATE = '''
         <p><a href="{{ link }}">{{ text }}</a></p>
         {%- endfor %}
 
+        <hr />
         {%- endfor %}
     </body>
 </html>
