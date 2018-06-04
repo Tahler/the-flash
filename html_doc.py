@@ -9,14 +9,19 @@ HTML_TEMPLATE = '''
     <head>
         <meta charset=utf-8>
         <title>Anki Content</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     </head>
-    <body>
+    <body class="container-fluid">
         {% for word in words %}
-        <h2>{{ word.word }}</h2>
+        <h2 class="col">{{ word.word }}</h2>
 
-        {% for path in word.image_paths %}
-        <img src="{{ path }}" />
-        {%- endfor %}
+        <div class="row">
+            {% for path in word.image_paths %}
+            <div class="col">
+                <img class="img-fluid" src="{{ path }}" />
+            </div>
+            {%- endfor %}
+        </div>
 
         {% for path in word.mp3_paths %}
         <audio controls>
