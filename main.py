@@ -2,7 +2,9 @@
 
 import argparse
 import itertools
+import logging
 import os
+import sys
 from typing import Any, List, Iterable, Tuple
 
 import forvo
@@ -11,6 +13,8 @@ import html_doc
 import sentences
 
 WORDS_PER_HTML_DOCUMENT = 100
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 def _remove_special_chars(s: str) -> str:
@@ -58,6 +62,8 @@ def run_query(query: str,
               num_example_sentences: int = None,
               num_images: int = None,
               num_pronunciations: int = None) -> html_doc.Word:
+    logging.info('Pulling data for %s', query)
+
     sentences_with_translations = sentences.query(query)
     sentences_with_translations_slice = itertools.islice(
         sentences_with_translations, num_example_sentences)
