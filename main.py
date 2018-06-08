@@ -22,7 +22,7 @@ def _remove_special_chars(s: str) -> str:
 
 
 def _save_file(open_mode: str, content: Any, directory: str,
-               file_name: str) -> os.PathLike:
+               file_name: str) -> str:
     directory = _remove_special_chars(directory)
     file_name = _remove_special_chars(file_name)
     if not os.path.exists(directory):
@@ -33,25 +33,22 @@ def _save_file(open_mode: str, content: Any, directory: str,
     return path
 
 
-def _save_txt_file(content: str, directory: str,
-                   file_name: str) -> os.PathLike:
+def _save_txt_file(content: str, directory: str, file_name: str) -> str:
     return _save_file('w+', content, directory, file_name)
 
 
-def _save_bin_file(content: bytes, directory: str,
-                   file_name: str) -> os.PathLike:
+def _save_bin_file(content: bytes, directory: str, file_name: str) -> str:
     return _save_file('wb+', content, directory, file_name)
 
 
-def _save_imgs_to_dir(img_ext_tuples: Iterable[Tuple[str, str]],
-                      directory: str) -> Iterable[os.PathLike]:
+def _save_imgs_to_dir(img_ext_tuples: Iterable[Tuple[bytes, str]],
+                      directory: str) -> Iterable[str]:
     for i, (img, ext) in enumerate(img_ext_tuples):
         file_name = '{}.{}'.format(i, ext)
         yield _save_bin_file(img, directory, file_name)
 
 
-def _save_mp3s_to_dir(mp3s: Iterable[bytes],
-                      directory: str) -> Iterable[os.PathLike]:
+def _save_mp3s_to_dir(mp3s: Iterable[bytes], directory: str) -> Iterable[str]:
     for i, mp3 in enumerate(mp3s):
         file_name = '{}.mp3'.format(i)
         yield _save_bin_file(mp3, directory, file_name)
@@ -110,14 +107,14 @@ def get_lines(file_name: str) -> Iterable[str]:
         return (line.strip() for line in f.readlines())
 
 
-def _save_words_as_html(words: List[html_doc.Word], directory: os.PathLike,
-                        file_name: os.PathLike) -> None:
+def _save_words_as_html(words: List[html_doc.Word], directory: str,
+                        file_name: str) -> None:
     html_str = html_doc.render(words)
     _save_txt_file(html_str, directory, file_name)
 
 
 def _save_words_as_html_in_chunks(words: Iterable[html_doc.Word],
-                                  directory: os.PathLike) -> None:
+                                  directory: str) -> None:
     i = 0
     last_flushed_index = i
     get_file_name = lambda: '{}-{}.html'.format(last_flushed_index, i - 1)

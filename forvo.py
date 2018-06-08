@@ -21,7 +21,7 @@ def _extract_play_id(on_click_play_call: str) -> Optional[str]:
     if match:
         args_str = match.group(1)
         args = args_str.split(',')
-        play_id = args[4]
+        play_id = args[4]  # type: Optional[str]
     else:
         play_id = None
     return play_id
@@ -36,7 +36,7 @@ def _extract_mp3_urls(soup: bs4.BeautifulSoup) -> Iterable[str]:
     on_clicks = (span['onclick'] for span in play_spans)
     play_ids = (_extract_play_id(on_click) for on_click in on_clicks)
     byte_str_paths = (base64.b64decode(play_id) for play_id in play_ids
-             if play_id is not None)
+                      if play_id is not None)
     paths = (byte_str.decode('utf-8') for byte_str in byte_str_paths)
     urls = (_get_mp3_url(path) for path in paths)
     return urls

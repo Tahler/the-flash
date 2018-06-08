@@ -46,8 +46,8 @@ HTML_TEMPLATE = '''
 
 class Word:
     def __init__(self, word: str, links: Iterable[Tuple[str, str]],
-                 sentences: Iterable[str], image_paths: Iterable[os.PathLike],
-                 mp3_paths: Iterable[os.PathLike]):
+                 sentences: Iterable[str], image_paths: Iterable[str],
+                 mp3_paths: Iterable[str]) -> None:
         self.word = word
         self.links = links
         self.sentences = sentences
