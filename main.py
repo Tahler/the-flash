@@ -175,6 +175,9 @@ def main(args: argparse.Namespace) -> None:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    logging.basicConfig(
+        stream=sys.stdout,
+        level=logging.DEBUG,
+        format='%(levelname)s\t> %(message)s')
     args = parse_args()
     main(args)
