@@ -9,6 +9,8 @@ import sys
 import time
 from typing import Any, List, Iterable, Tuple
 
+import requests
+
 import html_tmpl
 from scrape import forvo, google_images, sentences
 
@@ -104,7 +106,7 @@ def cards_for_queries(
                                  num_images, num_pronunciations)
                 retrieved = True
                 yield card
-            except Exception as e:
+            except requests.exceptions.RequestException as e:
                 logging.error('%s', e)
                 logging.info('Waiting %s before retrying', RETRY_INTERVAL)
                 time.sleep(RETRY_INTERVAL.seconds)
