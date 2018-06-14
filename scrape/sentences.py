@@ -22,23 +22,24 @@ def _extract_sentence(div: bs4.BeautifulSoup) -> str:
     return text
 
 
-def _extract_translations(div: bs4.BeautifulSoup) -> List[str]:
+def _extract_translations(div: bs4.BeautifulSoup) -> Iterable[str]:
     translations_divs = div.find_all('div', 'translation')
-    text_divs = [div.find('div', 'text') for div in translations_divs]
-    translations = [div.get_text().strip() for div in text_divs]
-    return translations
+    for div in translations_divs:
+        text_div = div.find('div', 'text')
+        translation = text_div.get_text().strip()
+        yield translation
 
 
 def _extract_sentences_with_translations(
-        soup: bs4.BeautifulSoup) -> Iterable[Tuple[str, List[str]]]:
-    cards = soup.find_all('div', 'sentence-and-translations')
-    sentences = (_extract_sentence(div) for div in cards)
-    translations_lists = (_extract_translations(div) for div in cards)
-    sentences_with_translations = zip(sentences, translations_lists)
-    return sentences_with_translations
+        soup: bs4.BeautifulSoup) -> Iterable[Tuple[str, Iterable[str]]]:
+    divs = soup.find_all('div', 'sentence-and-translations')
+    for div in divs:
+        sentence = _extract_sentence(div)
+        translations = _extract_translations(sentence)
+        yield sentence, translations
 
 
-def query(query: str) -> Iterable[Tuple[str, List[str]]]:
+def query(query: str) -> Iterable[Tuple[str, Iterable[str]]]:
     """Returns a generator of (sentence, translations)."""
     url = _get_query_url(query)
     soup = soups.get(url)
