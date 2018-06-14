@@ -3,8 +3,7 @@ from typing import Any, Dict, Iterable, Tuple
 
 import jinja2
 
-HTML_TEMPLATE = '''
-<!doctype html>
+HTML_TEMPLATE = '''<!doctype html>
 <html lang=en>
     <head>
         <meta charset=utf-8>
