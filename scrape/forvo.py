@@ -44,16 +44,11 @@ def _extract_mp3_urls(soup: bs4.BeautifulSoup) -> Iterable[str]:
             yield url
 
 
-def _get_bytes(url: str) -> bytes:
-    response = requests.get(url)
-    return response.content
-
-
 def query(query: str) -> Iterable[bytes]:
     """Returns a generator of raw MP3 data for query from Forvo."""
     url = _get_query_url(query)
     soup = web.get_html(url)
     urls = _extract_mp3_urls(soup)
     for url in urls:
-        mp3 = _get_bytes(url)
+        mp3 = web.get_binary_content(url)
         yield mp3
