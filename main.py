@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 
 import argparse
+import datetime
 import itertools
 import logging
 import os
 import sys
+import time
 from typing import Any, List, Iterable, Tuple
 
 import html_tmpl
 from scrape import forvo, google_images, sentences
 
 CARDS_PER_HTML_DOCUMENT = 100
+RETRY_INTERVAL = datetime.timedelta(minutes=5)
 
 
 def _remove_special_chars(s: str) -> str:
@@ -85,7 +88,7 @@ def run_query(query: str,
 
 
 def cards_for_queries(
-        queries: Iterable[str],
+        queries: List[str],
         directory: str,
         num_example_sentences: int = None,
         num_images: int = None,
@@ -93,14 +96,23 @@ def cards_for_queries(
     for query in queries:
         underscored_query = query.replace(' ', '_')
         query_dir = os.path.join(directory, underscored_query)
-        card = run_query(query, query_dir, num_example_sentences, num_images,
-                         num_pronunciations)
-        yield card
+
+        retrieved = False
+        while not retrieved:
+            try:
+                card = run_query(query, query_dir, num_example_sentences,
+                                 num_images, num_pronunciations)
+                retrieved = True
+                yield card
+            except Exception as e:
+                logging.error('%s', e)
+                logging.info('Waiting %s before retrying', RETRY_INTERVAL)
+                time.sleep(RETRY_INTERVAL.seconds)
 
 
-def get_lines(file_name: str) -> Iterable[str]:
+def get_lines(file_name: str) -> List[str]:
     with open(file_name, 'r') as f:
-        return (line.strip() for line in f.readlines())
+        return [line.strip() for line in f.readlines()]
 
 
 def _save_cards_as_html(cards: List[html_tmpl.Card], directory: str,
@@ -116,20 +128,16 @@ def _save_cards_as_html_in_chunks(cards: Iterable[html_tmpl.Card],
     get_file_name = lambda: '{}-{}.html'.format(last_flushed_index, i - 1)
 
     buffered_cards = []
-    try:
-        for card in cards:
-            i += 1
-            buffered_cards.append(card)
+    for card in cards:
+        i += 1
+        buffered_cards.append(card)
 
-            should_flush = i % CARDS_PER_HTML_DOCUMENT == 0
-            if should_flush:
-                _save_cards_as_html(buffered_cards, directory, get_file_name())
+        should_flush = i % CARDS_PER_HTML_DOCUMENT == 0
+        if should_flush:
+            _save_cards_as_html(buffered_cards, directory, get_file_name())
 
-                last_flushed_index = i
-                buffered_cards = []
-
-    finally:
-        _save_cards_as_html(buffered_cards, directory, get_file_name())
+            last_flushed_index = i
+            buffered_cards = []
 
 
 def parse_args() -> argparse.Namespace:
