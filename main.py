@@ -10,7 +10,7 @@ from typing import Any, List, Iterable, Tuple
 import html_tmpl
 from scrape import forvo, google_images, sentences
 
-WORDS_PER_HTML_DOCUMENT = 100
+CARDS_PER_HTML_DOCUMENT = 100
 
 
 def _remove_special_chars(s: str) -> str:
@@ -54,7 +54,7 @@ def run_query(query: str,
               directory: str,
               num_example_sentences: int = None,
               num_images: int = None,
-              num_pronunciations: int = None) -> html_tmpl.Word:
+              num_pronunciations: int = None) -> html_tmpl.Card:
     logging.info('Pulling data for %s', query)
 
     sentences_with_translations = sentences.query(query)
@@ -76,7 +76,7 @@ def run_query(query: str,
         ('Sentences', sentences._get_query_url(query)),
     ]
 
-    return html_tmpl.Word(
+    return html_tmpl.Card(
         word=query,
         links=links,
         image_paths=img_paths,
@@ -84,18 +84,18 @@ def run_query(query: str,
         sentences=sentences_iter)
 
 
-def words_for_queries(
+def cards_for_queries(
         queries: Iterable[str],
         directory: str,
         num_example_sentences: int = None,
         num_images: int = None,
-        num_pronunciations: int = None) -> Iterable[html_tmpl.Word]:
+        num_pronunciations: int = None) -> Iterable[html_tmpl.Card]:
     for query in queries:
         underscored_query = query.replace(' ', '_')
         query_dir = os.path.join(directory, underscored_query)
-        word = run_query(query, query_dir, num_example_sentences, num_images,
+        card = run_query(query, query_dir, num_example_sentences, num_images,
                          num_pronunciations)
-        yield word
+        yield card
 
 
 def get_lines(file_name: str) -> Iterable[str]:
@@ -103,33 +103,33 @@ def get_lines(file_name: str) -> Iterable[str]:
         return (line.strip() for line in f.readlines())
 
 
-def _save_words_as_html(words: List[html_tmpl.Word], directory: str,
+def _save_cards_as_html(cards: List[html_tmpl.Card], directory: str,
                         file_name: str) -> None:
-    html_str = html_tmpl.render(words)
+    html_str = html_tmpl.render(cards)
     _save_txt_file(html_str, directory, file_name)
 
 
-def _save_words_as_html_in_chunks(words: Iterable[html_tmpl.Word],
+def _save_cards_as_html_in_chunks(cards: Iterable[html_tmpl.Card],
                                   directory: str) -> None:
     i = 0
     last_flushed_index = i
     get_file_name = lambda: '{}-{}.html'.format(last_flushed_index, i - 1)
 
-    buffered_words = []
+    buffered_cards = []
     try:
-        for word in words:
+        for card in cards:
             i += 1
-            buffered_words.append(word)
+            buffered_cards.append(card)
 
-            should_flush = i % WORDS_PER_HTML_DOCUMENT == 0
+            should_flush = i % CARDS_PER_HTML_DOCUMENT == 0
             if should_flush:
-                _save_words_as_html(buffered_words, directory, get_file_name())
+                _save_cards_as_html(buffered_cards, directory, get_file_name())
 
                 last_flushed_index = i
-                buffered_words = []
+                buffered_cards = []
 
     finally:
-        _save_words_as_html(buffered_words, directory, get_file_name())
+        _save_cards_as_html(buffered_cards, directory, get_file_name())
 
 
 def parse_args() -> argparse.Namespace:
@@ -159,11 +159,11 @@ def parse_args() -> argparse.Namespace:
 
 
 def main(args: argparse.Namespace) -> None:
-    lines = get_lines(args.word_list)
-    words = words_for_queries(lines, args.directory,
+    words = get_lines(args.word_list)
+    cards = cards_for_queries(words, args.directory,
                               args.num_example_sentences, args.num_images,
                               args.num_pronunciations)
-    _save_words_as_html_in_chunks(words, args.directory)
+    _save_cards_as_html_in_chunks(cards, args.directory)
 
 
 if __name__ == '__main__':

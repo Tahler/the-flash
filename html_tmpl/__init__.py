@@ -11,28 +11,28 @@ HTML_TEMPLATE = '''<!doctype html>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     </head>
     <body class="container-fluid">
-        {% for word in words %}
-        <h2 class="col">{{ word.word }}</h2>
+        {% for card in cards %}
+        <h2 class="col">{{ card.word }}</h2>
 
         <div class="row">
-            {% for path in word.image_paths %}
+            {% for path in card.image_paths %}
             <div class="col">
                 <img class="img-fluid" src="{{ path }}" />
             </div>
             {%- endfor %}
         </div>
 
-        {% for path in word.mp3_paths %}
+        {% for path in card.mp3_paths %}
         <audio controls>
             <source src="{{ path }}" type="audio/mpeg">
         </audio>
         {%- endfor %}
 
-        {% for sentence in word.sentences %}
+        {% for sentence in card.sentences %}
         <p>{{ sentence }}</p>
         {%- endfor %}
 
-        {% for text, link in word.links %}
+        {% for text, link in card.links %}
         <p><a href="{{ link }}">{{ text }}</a></p>
         {%- endfor %}
 
@@ -43,7 +43,7 @@ HTML_TEMPLATE = '''<!doctype html>
 '''
 
 
-class Word:
+class Card:
     def __init__(self, word: str, links: Iterable[Tuple[str, str]],
                  sentences: Iterable[str], image_paths: Iterable[str],
                  mp3_paths: Iterable[str]) -> None:
@@ -54,19 +54,19 @@ class Word:
         self.mp3_paths = mp3_paths
 
 
-def get_word_args(word: Word) -> Dict[str, Any]:
+def get_card_args(card: Card) -> Dict[str, Any]:
     return {
-        'word': word.word,
-        'image_paths': word.image_paths,
-        'links': word.links,
-        'mp3_paths': word.mp3_paths,
-        'sentences': word.sentences,
+        'word': card.word,
+        'image_paths': card.image_paths,
+        'links': card.links,
+        'mp3_paths': card.mp3_paths,
+        'sentences': card.sentences,
     }
 
 
-def render(words: Iterable[Word]) -> str:
+def render(cards: Iterable[Card]) -> str:
     template = jinja2.Template(HTML_TEMPLATE)
-    word_args = (get_word_args(word) for word in words)
-    args = {'words': word_args}
+    card_args = (get_card_args(card) for card in cards)
+    args = {'cards': card_args}
     html_str = template.render(args)
     return html_str
