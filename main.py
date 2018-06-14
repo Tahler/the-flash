@@ -56,7 +56,7 @@ def run_query(query: str,
               num_example_sentences: int = None,
               num_images: int = None,
               num_pronunciations: int = None) -> html_tmpl.Card:
-    logging.info('Pulling data for %s', query)
+    logging.info('pulling data for %s', query)
 
     sentences_with_translations = sentences.query(query)
     sentences_with_translations_slice = itertools.islice(

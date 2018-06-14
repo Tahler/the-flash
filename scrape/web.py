@@ -16,7 +16,7 @@ def request(url: str) -> requests.Response:
             return requests.get(url, headers=consts.REQUEST_HEADER)
         except requests.exceptions.RequestException as e:
             logging.error('%s', e)
-            logging.info('Waiting %s before retrying', RETRY_INTERVAL)
+            logging.info('waiting %s before retrying', RETRY_INTERVAL)
             time.sleep(RETRY_INTERVAL.seconds)
 
 
