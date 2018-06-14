@@ -16,9 +16,11 @@ def _get_query_url(query: str) -> str:
 
 def _extract_image_urls(soup: bs4.BeautifulSoup) -> Iterable[Tuple[str, str]]:
     metadata_elements = soup.find_all('div', 'rg_meta')
-    metadata_dicts = (json.loads(e.text) for e in metadata_elements)
-    url_ext_tuples = ((d['ou'], d['ity']) for d in metadata_dicts)
-    return url_ext_tuples
+    for element in metadata_elements:
+        js = json.loads(element.text)
+        img_url = js['ou']
+        img_extension = js['ity']
+        yield img_url, img_extension
 
 
 def _get_raw_image(url: str) -> bytes:
@@ -31,6 +33,6 @@ def query(query: str) -> Iterable[Tuple[bytes, str]]:
     url = _get_query_url(query)
     soup = soups.get(url)
     url_ext_tuples = _extract_image_urls(soup)
-    img_ext_tuples = ((_get_raw_image(url), ext)
-                      for url, ext in url_ext_tuples)
-    return img_ext_tuples
+    for (url, ext) in url_ext_tuples:
+        img = _get_raw_image(url)
+        yield img, ext
