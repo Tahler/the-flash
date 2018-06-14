@@ -80,9 +80,9 @@ def run_query(query: str,
     return html_tmpl.Card(
         word=query,
         links=links,
-        image_paths=img_paths,
-        mp3_paths=mp3_paths,
-        sentences=sentences_iter)
+        image_paths=list(img_paths),
+        mp3_paths=list(mp3_paths),
+        sentences=list(sentences_iter))
 
 
 def cards_for_queries(
@@ -97,7 +97,7 @@ def cards_for_queries(
 
         card = run_query(query, query_dir, num_example_sentences, num_images,
                          num_pronunciations)
-                yield card
+        yield card
 
 
 def get_lines(file_name: str) -> List[str]:

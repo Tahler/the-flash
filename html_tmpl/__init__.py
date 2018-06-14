@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, Iterable, Tuple
+from typing import Any, Dict, List, Tuple
 
 import jinja2
 
@@ -44,9 +44,9 @@ HTML_TEMPLATE = '''<!doctype html>
 
 
 class Card:
-    def __init__(self, word: str, links: Iterable[Tuple[str, str]],
-                 sentences: Iterable[str], image_paths: Iterable[str],
-                 mp3_paths: Iterable[str]) -> None:
+    def __init__(self, word: str, links: List[Tuple[str, str]],
+                 sentences: List[str], image_paths: List[str],
+                 mp3_paths: List[str]) -> None:
         self.word = word
         self.links = links
         self.sentences = sentences
@@ -64,9 +64,9 @@ def get_card_args(card: Card) -> Dict[str, Any]:
     }
 
 
-def render(cards: Iterable[Card]) -> str:
+def render(cards: List[Card]) -> str:
     template = jinja2.Template(HTML_TEMPLATE)
-    card_args = (get_card_args(card) for card in cards)
+    card_args = [get_card_args(card) for card in cards]
     args = {'cards': card_args}
     html_str = template.render(args)
     return html_str
