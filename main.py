@@ -115,10 +115,12 @@ def _save_cards_as_html_in_chunks(cards: Iterable[html_tmpl.Card],
                                   directory: str) -> None:
     i = 0
     last_flushed_index = i
-    get_file_name = lambda: '{}-{}.html'.format(last_flushed_index, i - 1)
-
     buffered_cards = []  # type: List[html_tmpl.Card]
-    flush_cards = lambda: _save_cards_as_html(buffered_cards, directory, get_file_name())
+
+    def flush_cards():
+        file_name = '{}-{}.html'.format(last_flushed_index, i - 1)
+        return _save_cards_as_html(buffered_cards, directory, file_name)
+
     try:
         for card in cards:
             i += 1
