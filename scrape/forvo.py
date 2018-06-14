@@ -43,7 +43,7 @@ def _extract_mp3_urls(soup: bs4.BeautifulSoup) -> Iterable[str]:
     return urls
 
 
-def _get_mp3(url: str) -> bytes:
+def _get_bytes(url: str) -> bytes:
     response = requests.get(url)
     return response.content
 
@@ -53,5 +53,5 @@ def query(query: str) -> Iterable[bytes]:
     url = _get_query_url(query)
     soup = soups.get(url)
     urls = _extract_mp3_urls(soup)
-    mp3s = (_get_mp3(url) for url in urls)
+    mp3s = (_get_bytes(url) for url in urls)
     return mp3s
