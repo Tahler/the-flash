@@ -117,17 +117,22 @@ def _save_cards_as_html_in_chunks(cards: Iterable[html_tmpl.Card],
     last_flushed_index = i
     get_file_name = lambda: '{}-{}.html'.format(last_flushed_index, i - 1)
 
-    buffered_cards = []
-    for card in cards:
-        i += 1
-        buffered_cards.append(card)
+    buffered_cards = []  # type: List[html_tmpl.Card]
+    flush_cards = lambda: _save_cards_as_html(buffered_cards, directory, get_file_name())
+    try:
+        for card in cards:
+            i += 1
+            buffered_cards.append(card)
 
-        should_flush = i % CARDS_PER_HTML_DOCUMENT == 0
-        if should_flush:
-            _save_cards_as_html(buffered_cards, directory, get_file_name())
+            should_flush = i % CARDS_PER_HTML_DOCUMENT == 0
+            if should_flush:
+                flush_cards()
 
-            last_flushed_index = i
-            buffered_cards = []
+                last_flushed_index = i
+                buffered_cards = []
+    except KeyboardInterrupt:
+        flush_cards()
+        sys.exit(1)
 
 
 def parse_args() -> argparse.Namespace:
