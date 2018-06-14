@@ -14,7 +14,7 @@ import requests
 import html_tmpl
 from scrape import forvo, google_images, sentences
 
-CARDS_PER_HTML_DOCUMENT = 100
+CARDS_PER_HTML_DOCUMENT = 10
 RETRY_INTERVAL = datetime.timedelta(minutes=5)
 
 
