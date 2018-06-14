@@ -134,7 +134,7 @@ def _save_words_as_html_in_chunks(words: Iterable[html_tmpl.Word],
         _save_words_as_html(buffered_words, directory, get_file_name())
 
 
-def main() -> None:
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description='Scrape the web to help make Anki flash cards.')
     parser.add_argument(
@@ -157,8 +157,10 @@ def main() -> None:
         default='out',
         type=str,
         help='directory to contain the scraped results')
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+def main(args: argparse.Namespace) -> None:
     lines = get_lines(args.word_list)
     words = words_for_queries(lines, args.directory,
                               args.num_example_sentences, args.num_images,
@@ -167,4 +169,5 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
+    args = parse_args()
+    main(args)
