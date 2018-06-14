@@ -7,10 +7,7 @@ import os
 import sys
 from typing import Any, List, Iterable, Tuple
 
-import forvo
-import google_images
-import html_doc
-import sentences
+from scrape import forvo, google_images, html_doc, sentences
 
 WORDS_PER_HTML_DOCUMENT = 100
 

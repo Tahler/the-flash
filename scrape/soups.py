@@ -1,7 +1,7 @@
 import bs4
 import requests
 
-import consts
+from . import consts
 
 
 def get(url: str) -> bs4.BeautifulSoup:

@@ -1,11 +1,11 @@
-import bs4
 import json
-import requests
 from typing import Iterable, Tuple
 from urllib import parse
 
-import consts
-import soups
+import bs4
+import requests
+
+from . import consts, soups
 
 
 def _get_query_url(query: str) -> str:

@@ -1,11 +1,12 @@
 import base64
-import bs4
 import re
-import requests
 from typing import Iterable, Optional
 from urllib import parse
 
-import soups
+import bs4
+import requests
+
+from . import soups
 
 PATTERN = re.compile(r'Play\((.*)\)')
 

@@ -1,9 +1,10 @@
-import bs4
-import requests
 from typing import List, Iterable, Tuple
 from urllib import parse
 
-import soups
+import bs4
+import requests
+
+from . import soups
 
 _QUERY_URL_FMT = (
     'https://tatoeba.org/eng/sentences/search?from=spa&to=eng&query={}')
