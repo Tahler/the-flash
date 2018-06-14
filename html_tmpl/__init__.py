@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import Any, Dict, List, Tuple
 
@@ -65,6 +66,7 @@ def get_card_args(card: Card) -> Dict[str, Any]:
 
 
 def render(cards: List[Card]) -> str:
+    logging.info('rendering HTML document')
     template = jinja2.Template(HTML_TEMPLATE)
     card_args = [get_card_args(card) for card in cards]
     args = {'cards': card_args}
