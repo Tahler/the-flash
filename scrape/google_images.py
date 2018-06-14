@@ -20,6 +20,8 @@ def _extract_image_urls(soup: bs4.BeautifulSoup) -> Iterable[Tuple[str, str]]:
         js = json.loads(element.text)
         img_url = js['ou']
         img_extension = js['ity']
+        if not img_extension:
+            img_extension = 'jpg'
         yield img_url, img_extension
 
 
