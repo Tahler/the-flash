@@ -5,7 +5,7 @@ from urllib import parse
 import bs4
 import requests
 
-from . import consts, soups
+from . import consts, web
 
 
 def _get_query_url(query: str) -> str:
@@ -33,7 +33,7 @@ def _get_raw_image(url: str) -> bytes:
 def query(query: str) -> Iterable[Tuple[bytes, str]]:
     """Returns a generator of (raw_image, extension) for the query."""
     url = _get_query_url(query)
-    soup = soups.get(url)
+    soup = web.get(url)
     url_ext_tuples = _extract_image_urls(soup)
     for (url, ext) in url_ext_tuples:
         img = _get_raw_image(url)

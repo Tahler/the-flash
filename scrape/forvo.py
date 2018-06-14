@@ -6,7 +6,7 @@ from urllib import parse
 import bs4
 import requests
 
-from . import soups
+from . import web
 
 PATTERN = re.compile(r'Play\((.*)\)')
 
@@ -52,7 +52,7 @@ def _get_bytes(url: str) -> bytes:
 def query(query: str) -> Iterable[bytes]:
     """Returns a generator of raw MP3 data for query from Forvo."""
     url = _get_query_url(query)
-    soup = soups.get(url)
+    soup = web.get(url)
     urls = _extract_mp3_urls(soup)
     for url in urls:
         mp3 = _get_bytes(url)

@@ -4,7 +4,7 @@ from urllib import parse
 import bs4
 import requests
 
-from . import soups
+from . import web
 
 _QUERY_URL_FMT = (
     'https://tatoeba.org/eng/sentences/search?from=spa&to=eng&query={}')
@@ -42,5 +42,5 @@ def _extract_sentences_with_translations(
 def query(query: str) -> Iterable[Tuple[str, Iterable[str]]]:
     """Returns a generator of (sentence, translations)."""
     url = _get_query_url(query)
-    soup = soups.get(url)
+    soup = web.get(url)
     return _extract_sentences_with_translations(soup)
