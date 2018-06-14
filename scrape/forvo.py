@@ -34,13 +34,14 @@ def _get_mp3_url(path: str) -> str:
 
 def _extract_mp3_urls(soup: bs4.BeautifulSoup) -> Iterable[str]:
     play_spans = soup.find('li', 'list-words').find_all('span', 'play')
-    on_clicks = (span['onclick'] for span in play_spans)
-    play_ids = (_extract_play_id(on_click) for on_click in on_clicks)
-    byte_str_paths = (base64.b64decode(play_id) for play_id in play_ids
-                      if play_id is not None)
-    paths = (byte_str.decode('utf-8') for byte_str in byte_str_paths)
-    urls = (_get_mp3_url(path) for path in paths)
-    return urls
+    for span in play_spans:
+        on_click = span['onclick']
+        play_id = _extract_play_id(on_click)
+        if play_id is not None:
+            path_bytes = base64.b64decode(play_id)
+            path = path_bytes.decode('utf-8')
+            url = _get_mp3_url(path)
+            yield url
 
 
 def _get_bytes(url: str) -> bytes:
@@ -53,5 +54,6 @@ def query(query: str) -> Iterable[bytes]:
     url = _get_query_url(query)
     soup = soups.get(url)
     urls = _extract_mp3_urls(soup)
-    mp3s = (_get_bytes(url) for url in urls)
-    return mp3s
+    for url in urls:
+        mp3 = _get_bytes(url)
+        yield mp3
