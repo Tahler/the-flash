@@ -7,7 +7,8 @@ import os
 import sys
 from typing import Any, List, Iterable, Tuple
 
-from scrape import forvo, google_images, html_doc, sentences
+import html_tmpl
+from scrape import forvo, google_images, sentences
 
 WORDS_PER_HTML_DOCUMENT = 100
 
@@ -55,7 +56,7 @@ def run_query(query: str,
               directory: str,
               num_example_sentences: int = None,
               num_images: int = None,
-              num_pronunciations: int = None) -> html_doc.Word:
+              num_pronunciations: int = None) -> html_tmpl.Word:
     logging.info('Pulling data for %s', query)
 
     sentences_with_translations = sentences.query(query)
@@ -77,7 +78,7 @@ def run_query(query: str,
         ('Sentences', sentences._get_query_url(query)),
     ]
 
-    return html_doc.Word(
+    return html_tmpl.Word(
         word=query,
         links=links,
         image_paths=img_paths,
@@ -90,7 +91,7 @@ def words_for_queries(
         directory: str,
         num_example_sentences: int = None,
         num_images: int = None,
-        num_pronunciations: int = None) -> Iterable[html_doc.Word]:
+        num_pronunciations: int = None) -> Iterable[html_tmpl.Word]:
     for query in queries:
         underscored_query = query.replace(' ', '_')
         query_dir = os.path.join(directory, underscored_query)
@@ -104,13 +105,13 @@ def get_lines(file_name: str) -> Iterable[str]:
         return (line.strip() for line in f.readlines())
 
 
-def _save_words_as_html(words: List[html_doc.Word], directory: str,
+def _save_words_as_html(words: List[html_tmpl.Word], directory: str,
                         file_name: str) -> None:
-    html_str = html_doc.render(words)
+    html_str = html_tmpl.render(words)
     _save_txt_file(html_str, directory, file_name)
 
 
-def _save_words_as_html_in_chunks(words: Iterable[html_doc.Word],
+def _save_words_as_html_in_chunks(words: Iterable[html_tmpl.Word],
                                   directory: str) -> None:
     i = 0
     last_flushed_index = i
