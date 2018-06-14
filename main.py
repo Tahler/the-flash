@@ -12,8 +12,6 @@ from scrape import forvo, google_images, sentences
 
 WORDS_PER_HTML_DOCUMENT = 100
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-
 
 def _remove_special_chars(s: str) -> str:
     return s.encode('ascii', 'ignore').decode('utf-8')
@@ -169,5 +167,6 @@ def main(args: argparse.Namespace) -> None:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     args = parse_args()
     main(args)
