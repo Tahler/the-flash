@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import datetime
 import itertools
 import logging
 import os
@@ -9,13 +8,10 @@ import sys
 import time
 from typing import Any, List, Iterable, Tuple
 
-import requests
-
 import html_tmpl
 from scrape import forvo, google_images, sentences
 
 CARDS_PER_HTML_DOCUMENT = 10
-RETRY_INTERVAL = datetime.timedelta(minutes=5)
 
 
 def _remove_special_chars(s: str) -> str:
@@ -99,17 +95,9 @@ def cards_for_queries(
         underscored_query = query.replace(' ', '_')
         query_dir = os.path.join(directory, underscored_query)
 
-        retrieved = False
-        while not retrieved:
-            try:
-                card = run_query(query, query_dir, num_example_sentences,
-                                 num_images, num_pronunciations)
-                retrieved = True
+        card = run_query(query, query_dir, num_example_sentences, num_images,
+                         num_pronunciations)
                 yield card
-            except requests.exceptions.RequestException as e:
-                logging.error('%s', e)
-                logging.info('Waiting %s before retrying', RETRY_INTERVAL)
-                time.sleep(RETRY_INTERVAL.seconds)
 
 
 def get_lines(file_name: str) -> List[str]:
