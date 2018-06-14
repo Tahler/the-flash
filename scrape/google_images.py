@@ -1,5 +1,5 @@
 import json
-from typing import Iterable, Tuple
+from typing import List, Iterable, Tuple
 from urllib import parse
 
 import bs4
