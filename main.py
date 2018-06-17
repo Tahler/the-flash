@@ -43,7 +43,10 @@ def _save_bin_file(content: bytes, directory: str, file_name: str) -> str:
 
 def _save_img_file(content: bytes, directory: str, file_name: str) -> str:
     path = _save_bin_file(content, directory, file_name)
-    images.resize(path, _MAX_WIDTH, _MAX_HEIGHT)
+    try:
+        images.resize(path, _MAX_WIDTH, _MAX_HEIGHT)
+    except Exception as e:
+        logging.error('unable to resize image: %s', e)
     return path
 
 
