@@ -9,9 +9,12 @@ import time
 from typing import Any, List, Iterable, Tuple
 
 import html_tmpl
+import images
 from scrape import forvo, google_images, sentences
 
 CARDS_PER_HTML_DOCUMENT = 100
+_MAX_WIDTH = 400
+_MAX_HEIGHT = 400
 
 
 def _remove_special_chars(s: str) -> str:
@@ -38,11 +41,17 @@ def _save_bin_file(content: bytes, directory: str, file_name: str) -> str:
     return _save_file('wb+', content, directory, file_name)
 
 
+def _save_img_file(content: bytes, directory: str, file_name: str) -> str:
+    path = _save_bin_file(content, directory, file_name)
+    images.resize(path, _MAX_WIDTH, _MAX_HEIGHT)
+    return path
+
+
 def _save_imgs_to_dir(img_ext_tuples: Iterable[Tuple[bytes, str]],
                       directory: str) -> Iterable[str]:
     for i, (img, ext) in enumerate(img_ext_tuples):
         file_name = '{}.{}'.format(i, ext)
-        yield _save_bin_file(img, directory, file_name)
+        yield _save_img_file(img, directory, file_name)
 
 
 def _save_mp3s_to_dir(mp3s: Iterable[bytes], directory: str) -> Iterable[str]:

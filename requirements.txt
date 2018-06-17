@@ -1,3 +1,4 @@
 beautifulsoup4
 Jinja2
+pillow
 requests
