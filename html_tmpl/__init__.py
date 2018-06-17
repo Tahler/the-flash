@@ -18,14 +18,14 @@ HTML_TEMPLATE = '''<!doctype html>
         <div class="row">
             {% for path in card.image_paths %}
             <div class="col">
-                <img class="img-fluid" src="{{ path }}" />
+                <img class="img-fluid" src="../{{ path }}" />
             </div>
             {%- endfor %}
         </div>
 
         {% for path in card.mp3_paths %}
         <audio controls>
-            <source src="{{ path }}" type="audio/mpeg">
+            <source src="../{{ path }}" type="audio/mpeg">
         </audio>
         {%- endfor %}
 
