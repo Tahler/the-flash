@@ -11,7 +11,7 @@ from typing import Any, List, Iterable, Tuple
 import html_tmpl
 from scrape import forvo, google_images, sentences
 
-CARDS_PER_HTML_DOCUMENT = 10
+CARDS_PER_HTML_DOCUMENT = 100
 
 
 def _remove_special_chars(s: str) -> str:
