@@ -132,9 +132,8 @@ def _save_cards_as_html_in_chunks(cards: Iterable[html_tmpl.Card],
 
                 last_flushed_index = i
                 buffered_cards = []
-    except KeyboardInterrupt:
+    finally:
         flush_cards()
-        sys.exit(1)
 
 
 def parse_args() -> argparse.Namespace:
