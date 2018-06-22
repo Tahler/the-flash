@@ -23,11 +23,9 @@ HTML_TEMPLATE = '''<!doctype html>
             {%- endfor %}
         </div>
 
-        {% for path in card.mp3_paths %}
         <audio controls>
-            <source src="../{{ path }}" type="audio/mpeg">
+            <source src="../{{ card.mp3_path }}" type="audio/mpeg">
         </audio>
-        {%- endfor %}
 
         {% for sentence in card.sentences %}
         <p>{{ sentence }}</p>
@@ -47,12 +45,12 @@ HTML_TEMPLATE = '''<!doctype html>
 class Card:
     def __init__(self, word: str, links: List[Tuple[str, str]],
                  sentences: List[str], image_paths: List[str],
-                 mp3_paths: List[str]) -> None:
+                 mp3_path: str) -> None:
         self.word = word
         self.links = links
         self.sentences = sentences
         self.image_paths = image_paths
-        self.mp3_paths = mp3_paths
+        self.mp3_path = mp3_path
 
 
 def get_card_args(card: Card) -> Dict[str, Any]:
@@ -60,7 +58,7 @@ def get_card_args(card: Card) -> Dict[str, Any]:
         'word': card.word,
         'image_paths': card.image_paths,
         'links': card.links,
-        'mp3_paths': card.mp3_paths,
+        'mp3_path': card.mp3_path,
         'sentences': card.sentences,
     }
 

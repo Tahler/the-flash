@@ -9,7 +9,7 @@ import time
 from typing import Any, List, Iterable, Tuple
 
 from flash import html_tmpl, images
-from flash.scrape import forvo, google_images, sentences
+from flash.scrape import google_images, spanish_dict
 
 CARDS_PER_HTML_DOCUMENT = 100
 _MAX_WIDTH = 400
@@ -69,31 +69,26 @@ def run_query(query: str,
               num_pronunciations: int = None) -> html_tmpl.Card:
     logging.info('scraping web for %s', query)
 
-    sentences_with_translations = sentences.query(query)
-    sentences_with_translations_slice = itertools.islice(
-        sentences_with_translations, num_example_sentences)
-    sentences_iter = (t[0] for t in sentences_with_translations_slice)
-
     img_ext_tuples = google_images.query(query)
     img_ext_tuples_slice = itertools.islice(img_ext_tuples, num_images)
     img_paths = _save_imgs_to_dir(img_ext_tuples_slice, directory)
 
-    mp3s = forvo.query(query)
-    mp3s_slice = itertools.islice(mp3s, num_pronunciations)
-    mp3_paths = _save_mp3s_to_dir(mp3s_slice, directory)
+    info = spanish_dict.query(query)
+    mp3_path = _save_bin_file(info.pronunciation, directory,
+                              'pronunciation.mp3')
+    examples = itertools.islice(info.examples, num_example_sentences)
 
     links = [
         ('Images', google_images._get_query_url(query)),
-        ('Pronunciations', forvo._get_query_url(query)),
-        ('Sentences', sentences._get_query_url(query)),
+        ('Spanish Dict', info.url),
     ]
 
     return html_tmpl.Card(
-        word=query,
+        word=info.word,
         links=links,
         image_paths=list(img_paths),
-        mp3_paths=list(mp3_paths),
-        sentences=list(sentences_iter))
+        mp3_path=mp3_path,
+        sentences=list(examples))
 
 
 def cards_for_queries(
