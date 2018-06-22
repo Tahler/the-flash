@@ -8,9 +8,8 @@ import sys
 import time
 from typing import Any, List, Iterable, Tuple
 
-import html_tmpl
-import images
-from scrape import forvo, google_images, sentences
+from flash import html_tmpl, images
+from flash.scrape import forvo, google_images, sentences
 
 CARDS_PER_HTML_DOCUMENT = 100
 _MAX_WIDTH = 400
