@@ -76,16 +76,22 @@ def query(query: str) -> Info:
     url = _get_query_url(query)
 
     soup = web.get_html(url)
-    card = soup.find('div', 'card')
+    tab_div = soup.find('div', id='translate-en')
+    if tab_div is None:
+        tab_div = soup
+    card = tab_div.find('div', 'card')
 
     pronunciation_url = card.find('div', 'source').find(
         'span', 'media-links').find('a')['href']
     pronunciation = web.get_binary_content(pronunciation_url)
 
-    part_of_speech_text = card.find(
-        'a', 'dictionary-neodict-first-part-of-speech').get_text()
-    part_of_speech = _extract_part_of_speech(part_of_speech_text)
-    word = _attach_gender(query, part_of_speech)
+    part_of_speech_div = card.find('a',
+                                   'dictionary-neodict-first-part-of-speech')
+    if part_of_speech_div is None:
+        word = query
+    else:
+        part_of_speech = _extract_part_of_speech(part_of_speech_div.get_text())
+        word = _attach_gender(query, part_of_speech)
 
     example_divs = card.find_all('div', 'dictionary-neodict-example')
     examples = [div.find('span').get_text().strip() for div in example_divs]
