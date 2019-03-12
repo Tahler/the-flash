@@ -11,7 +11,7 @@ from typing import Any, List, Iterable, Tuple
 from flash import html_tmpl, images
 from flash.scrape import google_images, spanish_dict
 
-CARDS_PER_HTML_DOCUMENT = 100
+CARDS_PER_HTML_DOCUMENT = 25
 _MAX_WIDTH = 400
 _MAX_HEIGHT = 400
 
@@ -101,9 +101,12 @@ def cards_for_queries(
         underscored_query = query.replace(' ', '_')
         query_dir = os.path.join(directory, underscored_query)
 
-        card = run_query(query, query_dir, num_example_sentences, num_images,
-                         num_pronunciations)
-        yield card
+        try:
+            card = run_query(query, query_dir, num_example_sentences,
+                             num_images, num_pronunciations)
+            yield card
+        except AttributeError as e:
+            logging.error('could not scrape %s: %s', query, e)
 
 
 def get_lines(file_name: str) -> List[str]:
@@ -179,7 +182,7 @@ def main(args: argparse.Namespace) -> None:
 if __name__ == '__main__':
     logging.basicConfig(
         stream=sys.stdout,
-        level=logging.DEBUG,
+        level=logging.INFO,
         format='%(levelname)s\t> %(message)s')
     args = parse_args()
     main(args)
