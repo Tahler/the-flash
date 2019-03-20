@@ -48,6 +48,4 @@ def query(query: str) -> Iterable[bytes]:
     url = _get_query_url(query)
     soup = web.get_html(url)
     urls = _extract_mp3_urls(soup)
-    for url in urls:
-        mp3 = web.get_binary_content(url)
-        yield mp3
+    return urls

@@ -24,11 +24,10 @@ def _extract_image_urls(soup: bs4.BeautifulSoup) -> Iterable[Tuple[str, str]]:
         yield img_url, img_extension
 
 
-def query(query: str) -> Iterable[Tuple[bytes, str]]:
+def query(query: str) -> Iterable[str]:
     """Returns a generator of (raw_image, extension) for the query."""
     url = _get_query_url(query)
     soup = web.get_html(url)
     url_ext_tuples = _extract_image_urls(soup)
-    for (url, ext) in url_ext_tuples:
-        img = web.get_binary_content(url)
-        yield img, ext
+    for (url, _) in url_ext_tuples:
+        yield url
