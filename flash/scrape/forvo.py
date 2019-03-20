@@ -4,7 +4,6 @@ from typing import Iterable, Optional
 from urllib import parse
 
 import bs4
-import requests
 
 from . import web
 

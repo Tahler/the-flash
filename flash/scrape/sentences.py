@@ -2,7 +2,6 @@ from typing import List, Iterable, Tuple
 from urllib import parse
 
 import bs4
-import requests
 
 from . import web
 
