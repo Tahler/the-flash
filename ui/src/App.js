@@ -54,13 +54,13 @@ class Search extends Component {
       <div>
         <input type="text" name="query" value={this.state.query} onChange={this.handleChange} />
         <button onClick={() => this.query(this.state.query)}>Submit</button>
-        <Images urls={this.state.imgUrls} />
+        <ImagePicker urls={this.state.imgUrls} />
       </div>
     );
   }
 }
 
-class Images extends Component {
+class ImagePicker extends Component {
   static defaultProps = {
     urls: [],
   };
