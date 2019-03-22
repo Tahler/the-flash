@@ -1,5 +1,2 @@
 beautifulsoup4
-Flask
-Jinja2
-pillow
 requests
