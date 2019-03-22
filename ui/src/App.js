@@ -32,6 +32,7 @@ class Search extends Component {
     this.state = {
       query: '',
       imgUrls: [],
+      mp3Urls: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -42,11 +43,13 @@ class Search extends Component {
   }
 
   query(query) {
-    const path = encodeURIComponent(query);
-    const url = `http://localhost:5000/images/google/${path}`;
-    fetch(url)
-        .then(response => response.json())
-        .then(imgUrls => this.setState({imgUrls}));
+    const encodedQuery = encodeURIComponent(query);
+    Promise.all([
+      fetch(`http://localhost:5000/images/google/${encodedQuery}`),
+      fetch(`http://localhost:5000/audio/forvo/${encodedQuery}`),
+    ])
+      .then(responses => Promise.all(responses.map(response => response.json()))
+      .then(([imgUrls, mp3Urls]) => this.setState({imgUrls, mp3Urls})))
   }
 
   render() {
@@ -55,6 +58,8 @@ class Search extends Component {
         <input type="text" name="query" value={this.state.query} onChange={this.handleChange} />
         <button onClick={() => this.query(this.state.query)}>Submit</button>
         <ImagePicker urls={this.state.imgUrls} />
+        <hr />
+        <AudioPicker urls={this.state.mp3Urls} />
       </div>
     );
   }
@@ -71,6 +76,26 @@ class ImagePicker extends Component {
     return (
       <div>
         {imgs}
+      </div>
+    );
+  }
+}
+
+class AudioPicker extends Component {
+  static defaultProps = {
+    urls: [],
+  };
+
+  render() {
+    const audios = this.props.urls.map(url => (
+      <audio key={url} controls>
+        <source src={url} type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+    ));
+    return (
+      <div>
+        {audios}
       </div>
     );
   }
