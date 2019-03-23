@@ -13,10 +13,13 @@ export default class Picker extends Component {
     super(props);
     this.state = {
       selectedImgUrls: new Set(),
+      selectedMp3Urls: new Set(),
     };
 
     this.addSelectedImgUrl = this.addSelectedImgUrl.bind(this);
     this.deleteSelectedImgUrl = this.deleteSelectedImgUrl.bind(this);
+    this.addSelectedMp3Url = this.addSelectedMp3Url.bind(this);
+    this.deleteSelectedMp3Url = this.deleteSelectedMp3Url.bind(this);
   }
 
   addSelectedImgUrl(url) {
@@ -29,6 +32,16 @@ export default class Picker extends Component {
     this.setState({selectedImgUrls: this.state.selectedImgUrls});
   }
 
+  addSelectedMp3Url(url) {
+    this.state.selectedMp3Urls.add(url);
+    this.setState({selectedMp3Urls: this.state.selectedMp3Urls});
+  }
+
+  deleteSelectedMp3Url(url) {
+    this.state.selectedMp3Urls.delete(url);
+    this.setState({selectedMp3Urls: this.state.selectedMp3Urls});
+  }
+
   render() {
     return (
       <div>
@@ -38,7 +51,11 @@ export default class Picker extends Component {
             onDeselect={this.deleteSelectedImgUrl}
         />
         <hr />
-        <AudioPicker urls={this.props.mp3Urls} />
+        <AudioPicker
+            urls={this.props.mp3Urls}
+            onSelect={this.addSelectedMp3Url}
+            onDeselect={this.deleteSelectedMp3Url}
+        />
       </div>
     );
   }

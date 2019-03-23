@@ -1,0 +1,10 @@
+.audios {
+  display: flex;
+  justify-content: center;
+}
+
+.audio-container {
+  margin: 16px;
+  border: 8px solid transparent;
+  border-radius: 16px;
+}
