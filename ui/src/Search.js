@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import AudioPicker from './AudioPicker';
-import ImagePicker from './ImagePicker';
+import Picker from './Picker';
 
 export default class Search extends Component {
   constructor(props) {
@@ -33,9 +32,10 @@ export default class Search extends Component {
       <div>
         <input type="text" name="query" value={this.state.query} onChange={this.handleChange} />
         <button onClick={() => this.query(this.state.query)}>Submit</button>
-        <ImagePicker urls={this.state.imgUrls} />
-        <hr />
-        <AudioPicker urls={this.state.mp3Urls} />
+        <Picker
+            imgUrls={this.state.imgUrls}
+            mp3Urls={this.state.mp3Urls}>
+        </Picker>
       </div>
     );
   }
