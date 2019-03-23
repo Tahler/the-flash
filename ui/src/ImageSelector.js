@@ -1,40 +1,32 @@
 import React, { Component } from 'react';
-import './AudioPicker.css';
+import './ImageSelector.css';
 
 const NO_OP = () => {};
 
-export default class AudioPicker extends Component {
+export default class ImageSelector extends Component {
   static defaultProps = {
-    url: '',
+    urls: [],
     onSelect: NO_OP,
     onDeselect: NO_OP,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isSelected: false,
-    };
-  }
-
   render() {
-    const audios = this.props.urls.map(url => (
-        <SelectableAudio
+    const imgs = this.props.urls.map(url =>
+        <SelectableImage
             key={url}
             url={url}
             onSelect={this.props.onSelect}
             onDeselect={this.props.onDeselect}
-        />
-    ));
+        />)
     return (
-      <div className="audios">
-        {audios}
+      <div className="imgs">
+        {imgs}
       </div>
     );
   }
 }
 
-class SelectableAudio extends Component {
+class SelectableImage extends Component {
   static defaultProps = {
     url: '',
     onSelect: NO_OP,
@@ -57,18 +49,14 @@ class SelectableAudio extends Component {
   }
 
   render() {
-    const selected = this.state.isSelected ? 'selected' : '';
-    const classString = `audio-container ${selected}`;
     return (
-      <div
-          className={classString}
+      <img
+          src={this.props.url}
+          alt=""
           onClick={this.toggleSelect}
+          className={this.state.isSelected ? 'selected' : ''}
       >
-        <audio controls>
-          <source src={this.props.url} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
+      </img>
     );
   }
 }

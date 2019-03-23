@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Picker from './Picker';
+import Selector from './Selector';
 
 export default class Search extends Component {
   constructor(props) {
@@ -32,7 +32,7 @@ export default class Search extends Component {
       <div>
         <input type="text" name="query" value={this.state.query} onChange={this.handleChange} />
         <button onClick={() => this.query(this.state.query)}>Submit</button>
-        <Picker
+        <Selector
             imgUrls={this.state.imgUrls}
             mp3Urls={this.state.mp3Urls}
             onSubmit={(card) => console.log(card)}

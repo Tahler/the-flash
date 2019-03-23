@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import AudioPicker from './AudioPicker';
-import ImagePicker from './ImagePicker';
-import './Picker.css';
+import AudioSelector from './AudioSelector';
+import ImageSelector from './ImageSelector';
+import './Selector.css';
 
 const NO_OP = () => {};
 
-export default class Picker extends Component {
+export default class Selector extends Component {
   static defaultProps = {
     imgUrls: [],
     mp3Urls: [],
@@ -56,13 +56,13 @@ export default class Picker extends Component {
   render() {
     return (
       <div>
-        <ImagePicker
+        <ImageSelector
             urls={this.props.imgUrls}
             onSelect={this.addSelectedImgUrl}
             onDeselect={this.deleteSelectedImgUrl}
         />
         <hr />
-        <AudioPicker
+        <AudioSelector
             urls={this.props.mp3Urls}
             onSelect={this.addSelectedMp3Url}
             onDeselect={this.deleteSelectedMp3Url}

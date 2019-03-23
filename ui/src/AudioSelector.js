@@ -1,32 +1,41 @@
 import React, { Component } from 'react';
-import './ImagePicker.css';
+import './AudioSelector.css';
 
 const NO_OP = () => {};
 
-export default class ImagePicker extends Component {
+export default class AudioSelector extends Component {
   static defaultProps = {
-    urls: [],
+    url: '',
     onSelect: NO_OP,
     onDeselect: NO_OP,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isSelected: false,
+    };
+  }
+
   render() {
-    const imgs = this.props.urls.map(url =>
-        <SelectableImage
+    const audios = this.props.urls.map(url => (
+        <SelectableAudio
             key={url}
             url={url}
             onSelect={this.props.onSelect}
             onDeselect={this.props.onDeselect}
-        />)
+        />
+    ));
     return (
-      <div className="imgs">
-        {imgs}
+      <div className="audios">
+        {audios}
       </div>
     );
   }
 }
 
-class SelectableImage extends Component {
+// TODO: customize controls: only play button plus clickable area?
+class SelectableAudio extends Component {
   static defaultProps = {
     url: '',
     onSelect: NO_OP,
@@ -49,14 +58,18 @@ class SelectableImage extends Component {
   }
 
   render() {
+    const selected = this.state.isSelected ? 'selected' : '';
+    const classString = `audio-container ${selected}`;
     return (
-      <img
-          src={this.props.url}
-          alt=""
+      <div
+          className={classString}
           onClick={this.toggleSelect}
-          className={this.state.isSelected ? 'selected' : ''}
       >
-      </img>
+        <audio controls>
+          <source src={this.props.url} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
     );
   }
 }
