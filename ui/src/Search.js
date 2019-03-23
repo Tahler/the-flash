@@ -34,8 +34,9 @@ export default class Search extends Component {
         <button onClick={() => this.query(this.state.query)}>Submit</button>
         <Picker
             imgUrls={this.state.imgUrls}
-            mp3Urls={this.state.mp3Urls}>
-        </Picker>
+            mp3Urls={this.state.mp3Urls}
+            onSubmit={(card) => console.log(card)}
+        />
       </div>
     );
   }

@@ -3,10 +3,13 @@ import AudioPicker from './AudioPicker';
 import ImagePicker from './ImagePicker';
 import './Picker.css';
 
+const NO_OP = () => {};
+
 export default class Picker extends Component {
   static defaultProps = {
     imgUrls: [],
     mp3Urls: [],
+    onSubmit: NO_OP,
   };
 
   constructor(props) {
@@ -16,10 +19,18 @@ export default class Picker extends Component {
       selectedMp3Urls: new Set(),
     };
 
+    this.submit = this.submit.bind(this);
     this.addSelectedImgUrl = this.addSelectedImgUrl.bind(this);
     this.deleteSelectedImgUrl = this.deleteSelectedImgUrl.bind(this);
     this.addSelectedMp3Url = this.addSelectedMp3Url.bind(this);
     this.deleteSelectedMp3Url = this.deleteSelectedMp3Url.bind(this);
+  }
+
+  submit() {
+    this.props.onSubmit(new FlashCard({
+      imageUrls: this.state.selectedImgUrls,
+      audioUrls: this.state.selectedMp3Urls,
+    }));
   }
 
   addSelectedImgUrl(url) {
@@ -56,7 +67,15 @@ export default class Picker extends Component {
             onSelect={this.addSelectedMp3Url}
             onDeselect={this.deleteSelectedMp3Url}
         />
+        <button onClick={this.submit}>Submit</button>
       </div>
     );
+  }
+}
+
+class FlashCard {
+  constructor({imageUrls, audioUrls}) {
+    this.imageUrls = imageUrls;
+    this.audioUrls = audioUrls;
   }
 }
