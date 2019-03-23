@@ -1,4 +1,10 @@
+.imgs {
+  display: flex;
+  justify-content: center;
+}
+
 img {
+  margin: 16px;
   max-width: 300px;
   max-height: 300px;
 }

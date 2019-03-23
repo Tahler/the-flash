@@ -10,7 +10,7 @@ export default class ImagePicker extends Component {
     const imgs = this.props.urls.map(url =>
         <img src={url} alt="" key={url}></img>)
     return (
-      <div>
+      <div className="imgs">
         {imgs}
       </div>
     );
