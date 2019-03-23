@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import AudioSelector from './AudioSelector';
 import ImageSelector from './ImageSelector';
-import './Selector.css';
+import './FlashCardCreator.css';
 
 const NO_OP = () => {};
 
-export default class Selector extends Component {
+export default class FlashCardCreator extends Component {
   static defaultProps = {
     imgUrls: [],
     mp3Urls: [],
