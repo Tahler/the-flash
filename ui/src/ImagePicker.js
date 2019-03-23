@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './ImagePicker.css';
 
 export default class ImagePicker extends Component {
   static defaultProps = {
@@ -7,7 +8,7 @@ export default class ImagePicker extends Component {
 
   render() {
     const imgs = this.props.urls.map(url =>
-        <img src={url} alt="" className="result-img" key={url}></img>)
+        <img src={url} alt="" key={url}></img>)
     return (
       <div>
         {imgs}
