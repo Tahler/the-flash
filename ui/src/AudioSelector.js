@@ -3,6 +3,7 @@ import './AudioSelector.css';
 
 const NO_OP = () => {};
 
+// TODO: should only be able to choose one
 export default class AudioSelector extends Component {
   static defaultProps = {
     url: '',

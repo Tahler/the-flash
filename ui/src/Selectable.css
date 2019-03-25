@@ -1,0 +1,11 @@
+.selectable {
+  border-radius: 16px;
+}
+
+.unselected {
+  border: 8px solid transparent;
+}
+
+.selected {
+  border: 8px solid blue;
+}

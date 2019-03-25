@@ -1,3 +1,6 @@
+// TODO: can anki read from URLs or does it need files?
+// TODO: immutable sets
+// TODO: proptypes
 import React, { Component } from 'react';
 import AudioSelector from './AudioSelector';
 import ImageSelector from './ImageSelector';
@@ -34,6 +37,7 @@ export default class FlashCardCreator extends Component {
   }
 
   addSelectedImgUrl(url) {
+    console.log('calling')
     this.state.selectedImgUrls.add(url);
     this.setState({selectedImgUrls: this.state.selectedImgUrls});
   }
