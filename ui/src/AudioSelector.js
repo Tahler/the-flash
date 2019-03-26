@@ -6,15 +6,20 @@ const NO_OP = () => {};
 export default class AudioSelector extends Component {
   static defaultProps = {
     url: '',
-    onSelect: NO_OP,
-    onDeselect: NO_OP,
+    onSelectionChange: NO_OP,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      isSelected: false,
+      selectedUrl: undefined,
     };
+  }
+
+  onClick(url) {
+    const selectedUrl = this.state.selectedUrl === url ? undefined : url;
+    this.props.onSelectionChange(selectedUrl);
+    this.setState({selectedUrl});
   }
 
   render() {
@@ -22,8 +27,8 @@ export default class AudioSelector extends Component {
         <SelectableAudio
             key={url}
             url={url}
-            onSelect={this.props.onSelect}
-            onDeselect={this.props.onDeselect}
+            isSelected={this.state.selectedUrl === url}
+            onClick={() => this.onClick(url)}
         />
     ));
     return (
@@ -38,38 +43,18 @@ export default class AudioSelector extends Component {
 class SelectableAudio extends Component {
   static defaultProps = {
     url: '',
-    onSelect: NO_OP,
-    onDeselect: NO_OP,
+    isSelected: false,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isSelected: false,
-    };
-    this.toggleSelect = this.toggleSelect.bind(this);
-  }
-
-  toggleSelect() {
-    const isSelecting = !this.state.isSelected;
-    const event = isSelecting ? this.props.onSelect : this.props.onDeselect;
-    event(this.props.url);
-    this.setState({isSelected: isSelecting});
-  }
-
   render() {
-    const selected = this.state.isSelected ? 'selected' : '';
-    const classString = `audio-container ${selected}`;
+    const {isSelected, url, ...otherProps} = this.props;
+    const selectedClass = isSelected ? 'selected' : '';
+    const classes = `audio-container ${selectedClass}`;
     return (
-      <div
-          className={classString}
-          onClick={this.toggleSelect}
-      >
-        <audio controls>
-          <source src={this.props.url} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
+      <audio controls className={classes} {...otherProps}>
+        <source src={url} type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
     );
   }
 }

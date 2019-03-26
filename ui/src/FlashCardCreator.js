@@ -16,20 +16,19 @@ export default class FlashCardCreator extends Component {
     super(props);
     this.state = {
       selectedImgUrls: new Set(),
-      selectedMp3Urls: new Set(),
+      selectedMp3Url: undefined,
     };
 
     this.submit = this.submit.bind(this);
     this.addSelectedImgUrl = this.addSelectedImgUrl.bind(this);
     this.deleteSelectedImgUrl = this.deleteSelectedImgUrl.bind(this);
-    this.addSelectedMp3Url = this.addSelectedMp3Url.bind(this);
-    this.deleteSelectedMp3Url = this.deleteSelectedMp3Url.bind(this);
+    this.setSelectedMp3Url = this.setSelectedMp3Url.bind(this);
   }
 
   submit() {
     this.props.onSubmit(new FlashCard({
       imageUrls: this.state.selectedImgUrls,
-      audioUrls: this.state.selectedMp3Urls,
+      audioUrl: this.state.selectedMp3Url,
     }));
   }
 
@@ -43,14 +42,8 @@ export default class FlashCardCreator extends Component {
     this.setState({selectedImgUrls: this.state.selectedImgUrls});
   }
 
-  addSelectedMp3Url(url) {
-    this.state.selectedMp3Urls.add(url);
-    this.setState({selectedMp3Urls: this.state.selectedMp3Urls});
-  }
-
-  deleteSelectedMp3Url(url) {
-    this.state.selectedMp3Urls.delete(url);
-    this.setState({selectedMp3Urls: this.state.selectedMp3Urls});
+  setSelectedMp3Url(url) {
+    this.setState({selectedMp3Url: url});
   }
 
   render() {
@@ -64,8 +57,7 @@ export default class FlashCardCreator extends Component {
         <hr />
         <AudioSelector
             urls={this.props.mp3Urls}
-            onSelect={this.addSelectedMp3Url}
-            onDeselect={this.deleteSelectedMp3Url}
+            onSelectionChange={this.setSelectedMp3Url}
         />
         <button onClick={this.submit}>Submit</button>
       </div>
@@ -74,8 +66,8 @@ export default class FlashCardCreator extends Component {
 }
 
 class FlashCard {
-  constructor({imageUrls, audioUrls}) {
+  constructor({imageUrls, audioUrl}) {
     this.imageUrls = imageUrls;
-    this.audioUrls = audioUrls;
+    this.audioUrl = audioUrl;
   }
 }
