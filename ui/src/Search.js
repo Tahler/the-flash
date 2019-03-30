@@ -5,9 +5,17 @@ export default class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      query: '',
-      imgUrls: [],
-      mp3Urls: [],
+      query: 'montaña',
+      imgUrls: [
+        'http://localhost:5000/static/montaña1.jpg',
+        'http://localhost:5000/static/montaña2.jpg',
+        'http://localhost:5000/static/montaña3.jpg',
+      ],
+      mp3Urls: [
+        'http://localhost:5000/static/montaña1.mp3',
+        'http://localhost:5000/static/montaña2.mp3',
+        'http://localhost:5000/static/montaña3.mp3',
+      ],
     };
 
     this.handleChange = this.handleChange.bind(this);
