@@ -54,7 +54,6 @@ export default class FlashCardCreator extends Component {
             onSelect={this.addSelectedImgUrl}
             onDeselect={this.deleteSelectedImgUrl}
         />
-        <hr />
         <AudioSelector
             urls={this.props.mp3Urls}
             onSelectionChange={this.setSelectedMp3Url}
