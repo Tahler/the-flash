@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import './ImageSelector.css';
 
-const NO_OP = () => {};
-
 export default class ImageSelector extends Component {
   static defaultProps = {
     urls: [],
-    onSelect: NO_OP,
-    onDeselect: NO_OP,
+    onSelect: () => {},
+    onDeselect: () => {},
   };
 
   render() {
@@ -29,8 +27,8 @@ export default class ImageSelector extends Component {
 class SelectableImage extends Component {
   static defaultProps = {
     url: '',
-    onSelect: NO_OP,
-    onDeselect: NO_OP,
+    onSelect: () => {},
+    onDeselect: () => {},
   };
 
   constructor(props) {

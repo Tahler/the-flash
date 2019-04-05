@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import './AudioSelector.css';
 
-const NO_OP = () => {};
-
 export default class AudioSelector extends Component {
   static defaultProps = {
     url: '',
-    onSelectionChange: NO_OP,
+    onSelectionChange: () => {},
   };
 
   constructor(props) {

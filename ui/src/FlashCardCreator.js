@@ -3,13 +3,11 @@ import AudioSelector from './AudioSelector';
 import ImageSelector from './ImageSelector';
 import './FlashCardCreator.css';
 
-const NO_OP = () => {};
-
 export default class FlashCardCreator extends Component {
   static defaultProps = {
     imgUrls: [],
     mp3Urls: [],
-    onSubmit: NO_OP,
+    onSubmit: () => {},
   };
 
   constructor(props) {
