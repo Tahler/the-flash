@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { query } from './shared/query';
 import FlashCardCreator from './FlashCardCreator';
 
 export default class Search extends Component {
@@ -25,21 +26,11 @@ export default class Search extends Component {
     this.setState({query: event.target.value});
   }
 
-  query(query) {
-    const encodedQuery = encodeURIComponent(query);
-    Promise.all([
-      fetch(`http://localhost:5000/images/google/${encodedQuery}`),
-      fetch(`http://localhost:5000/audio/forvo/${encodedQuery}`),
-    ])
-      .then(responses => Promise.all(responses.map(response => response.json()))
-      .then(([imgUrls, mp3Urls]) => this.setState({imgUrls, mp3Urls})))
-  }
-
   render() {
     return (
       <div>
         <input type="text" name="query" value={this.state.query} onChange={this.handleChange} />
-        <button onClick={() => this.query(this.state.query)}>Submit</button>
+        <button onClick={() => query(this.state.query)}>Submit</button>
         <FlashCardCreator
             imgUrls={this.state.imgUrls}
             mp3Urls={this.state.mp3Urls}
