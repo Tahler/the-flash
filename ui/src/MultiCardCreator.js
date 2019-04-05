@@ -38,7 +38,7 @@ export default class MultiCardCreator extends Component {
     });
   }
 
-  async onSubmit(flashCard) {
+  onSubmit(flashCard) {
     const {
       flashCards,
       word,
@@ -54,7 +54,7 @@ export default class MultiCardCreator extends Component {
         completeFlashCard,
       ],
     });
-    await this.nextWord();
+    this.nextWord();
   }
 
   render() {
