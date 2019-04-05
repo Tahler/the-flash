@@ -5,6 +5,7 @@ import FlashCardCreator from './FlashCardCreator';
 export default class MultiCardCreator extends Component {
   static defaultProps = {
     words: [],
+    onComplete: () => {},
   };
 
   constructor(props) {
@@ -45,19 +46,31 @@ export default class MultiCardCreator extends Component {
     const {
       flashCards,
       word,
+      wordIndex,
     } = this.state;
+    const {
+      onComplete,
+      words,
+    } = this.props;
 
     const completeFlashCard = {
-      word,
       ...flashCard,
+      word,
     };
+    const appendedFlashCards = [
+      ...flashCards,
+      completeFlashCard,
+    ];
     this.setState({
-      flashCards: [
-        ...flashCards,
-        completeFlashCard,
-      ],
+      flashCards: appendedFlashCards,
     });
-    this.nextWord();
+
+    const hasMoreWords = wordIndex + 1 < words.length;
+    if (hasMoreWords) {
+      this.nextWord();
+    } else {
+      onComplete(appendedFlashCards);
+    }
   }
 
   render() {

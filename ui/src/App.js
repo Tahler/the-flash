@@ -32,7 +32,13 @@ export default class App extends Component {
         content = <WordListEntry onSubmit={this.receiveWords}></WordListEntry>;
         break;
       case stage.createFlashCards:
-        content = <MultiCardCreator words={this.state.words}></MultiCardCreator>
+        content = (
+            <MultiCardCreator
+                words={this.state.words}
+                onComplete={cards => console.log(cards)}
+            >
+            </MultiCardCreator>
+        );
         break;
       default:
         throw new Error('impossible');
