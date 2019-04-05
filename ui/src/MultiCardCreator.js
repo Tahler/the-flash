@@ -26,6 +26,9 @@ export default class MultiCardCreator extends Component {
   async nextWord() {
     const nextWordIndex = this.state.wordIndex + 1;
     const nextWord = this.props.words[nextWordIndex];
+    if (!nextWord) {
+      throw new Error(`no word at index ${nextWordIndex}`);
+    }
     const {
       imgUrls,
       mp3Urls,
