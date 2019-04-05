@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import MultiCardCreator from './MultiCardCreator';
+import WordListEntry from './WordListEntry';
 import './App.css';
 
 export default class App extends Component {
   render() {
     return (
       <div className="App">
-        <MultiCardCreator words={['montaña', 'casa', 'cabrero']}></MultiCardCreator>
+        <WordListEntry onSubmit={words => console.log(words)}></WordListEntry>
       </div>
     );
   }
