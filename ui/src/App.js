@@ -6,6 +6,7 @@ import './App.css';
 const stage = {
   wordListEntry: 0,
   createFlashCards: 1,
+  complete: 2,
 };
 
 export default class App extends Component {
@@ -14,14 +15,23 @@ export default class App extends Component {
     this.state = {
       stage: stage.wordListEntry,
       words: [],
+      flashCards: [],
     };
     this.receiveWords = this.receiveWords.bind(this);
+    this.receiveFlashCards = this.receiveFlashCards.bind(this);
   }
 
   receiveWords(words) {
     this.setState({
       stage: stage.createFlashCards,
       words,
+    })
+  }
+
+  receiveFlashCards(flashCards) {
+    this.setState({
+      stage: stage.complete,
+      flashCards,
     })
   }
 
@@ -35,9 +45,25 @@ export default class App extends Component {
         content = (
             <MultiCardCreator
                 words={this.state.words}
-                onComplete={cards => console.log(cards)}
+                onComplete={this.receiveFlashCards}
             >
             </MultiCardCreator>
+        );
+        break;
+      case stage.complete:
+        content = this.state.flashCards.map(card =>
+            <div key={card.word}>
+              <p>{card.word}</p>
+              <div>
+                {card.imageUrls.map(url => <img key={url} src={url} alt="" />)}
+              </div>
+              <div>
+                <audio controls key={card.audioUrl}>
+                  <source src={card.audioUrl} type="audio/mpeg" />
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+            </div>
         );
         break;
       default:
