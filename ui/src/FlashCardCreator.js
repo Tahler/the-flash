@@ -25,7 +25,7 @@ export default class FlashCardCreator extends Component {
 
   submit() {
     this.props.onSubmit(new FlashCard({
-      imageUrls: this.state.selectedImgUrls,
+      imageUrls: [...this.state.selectedImgUrls],
       audioUrl: this.state.selectedMp3Url,
     }));
   }
