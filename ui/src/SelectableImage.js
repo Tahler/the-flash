@@ -31,7 +31,11 @@ export default class SelectableImage extends Component {
           className={`selectable-img ${isSelected ? 'selected' : ''}`}
           onClick={this.toggleSelect}
       >
-        <input type="checkbox" checked={isSelected} />
+        <input
+            type="checkbox"
+            onChange={this.toggleSelect}
+            checked={isSelected}
+        />
         <img src={url} alt="" />
       </div>
     );

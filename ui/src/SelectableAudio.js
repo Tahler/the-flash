@@ -32,7 +32,11 @@ export default class SelectableAudio extends Component {
           className={`selectable-audio ${isSelected ? 'selected' : ''}`}
           onClick={this.toggleSelect}
       >
-        <input type="radio" checked={isSelected} />
+        <input
+            type="radio"
+            onChange={this.toggleSelect}
+            checked={isSelected}
+        />
         <audio controls>
           <source src={url} type="audio/mpeg" />
           Your browser does not support the audio element.
