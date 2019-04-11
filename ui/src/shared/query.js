@@ -1,9 +1,20 @@
-export async function query(query) {
+async function fetchJson(url) {
+  return fetch(url).then(response => response.json());
+}
+
+async function queryImages(query) {
   const encodedQuery = encodeURIComponent(query);
+  return fetchJson(`http://localhost:5000/images/google/${encodedQuery}`);
+}
+
+async function queryAudio(query) {
+  const encodedQuery = encodeURIComponent(query);
+  return fetchJson(`http://localhost:5000/audio/forvo/${encodedQuery}`);
+}
+
+export async function query(query) {
   return Promise.all([
-    fetch(`http://localhost:5000/images/google/${encodedQuery}`),
-    fetch(`http://localhost:5000/audio/forvo/${encodedQuery}`),
-  ])
-    .then(responses => Promise.all(responses.map(response => response.json()))
-    .then(([imgUrls, mp3Urls]) => ({imgUrls, mp3Urls})));
+    queryImages(query),
+    queryAudio(query),
+  ]).then(([imgUrls, mp3Urls]) => ({imgUrls, mp3Urls}));
 }
