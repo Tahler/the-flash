@@ -8,6 +8,7 @@ const page = {
   wordListEntry: 0,
   createFlashCards: 1,
   viewFlashCards: 2,
+  menu: 3,
 };
 
 export default class App extends Component {
@@ -15,7 +16,7 @@ export default class App extends Component {
     super(props);
     const preloadedFlashCards = loadFlashCards();
     this.state = {
-      page: preloadedFlashCards ? page.viewFlashCards : page.wordListEntry,
+      page: page.menu,
       words: [],
       flashCards: preloadedFlashCards || [],
     };
@@ -41,6 +42,18 @@ export default class App extends Component {
   render() {
     let content;
     switch (this.state.page) {
+      case page.menu:
+        content = (
+          <div>
+            <button onClick={() => this.setState({page: page.wordListEntry})}>
+              Create Cards from Word List
+            </button>
+            <button onClick={() => this.setState({page: page.viewFlashCards})}>
+              View Flash Cards
+            </button>
+          </div>
+        );
+        break;
       case page.wordListEntry:
         content = <WordListEntry onSubmit={this.receiveWords}></WordListEntry>;
         break;
