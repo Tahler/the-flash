@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { SelectableAudio } from './AudioSelector';
-import { SelectableImage } from './ImageSelector';
+import SelectableAudio from './SelectableAudio';
+import SelectableImage from './SelectableImage';
 import { query } from './shared/query';
 import './FlashCardCreator.css';
 

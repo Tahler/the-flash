@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './AudioSelector.css';
+import './SelectableAudio.css';
 
 // TODO: customize controls: only play button plus clickable area?
 export class SelectableAudio extends Component {

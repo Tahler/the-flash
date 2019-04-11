@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './ImageSelector.css';
+import './SelectableImage.css';
 
 export class SelectableImage extends Component {
   static defaultProps = {
