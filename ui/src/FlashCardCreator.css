@@ -3,6 +3,16 @@
   justify-content: center;
 }
 
+.selectable {
+  margin: 8px;
+  padding: 8px;
+  border: 8px solid transparent;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+}
+
 .selected {
-  border: 8px solid blue;
+  border-color: blue;
 }

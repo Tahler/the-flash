@@ -28,7 +28,7 @@ export default class SelectableImage extends Component {
     } = this.props;
     return (
       <div
-          className={`selectable-img ${isSelected ? 'selected' : ''}`}
+          className={`selectable ${isSelected ? 'selected' : ''}`}
           onClick={this.toggleSelect}
       >
         <input

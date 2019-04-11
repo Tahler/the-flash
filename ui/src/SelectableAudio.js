@@ -29,7 +29,7 @@ export default class SelectableAudio extends Component {
     } = this.props;
     return (
       <div
-          className={`selectable-audio ${isSelected ? 'selected' : ''}`}
+          className={`selectable ${isSelected ? 'selected' : ''}`}
           onClick={this.toggleSelect}
       >
         <input

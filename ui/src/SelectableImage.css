@@ -2,14 +2,3 @@ img {
   max-width: 300px;
   max-height: 300px;
 }
-
-.selectable-img {
-  margin: 8px;
-  padding: 8px;
-  border: 8px solid transparent;
-  border-radius: 16px;
-
-  display: flex;
-  align-content: center;
-  align-items: center;
-}
