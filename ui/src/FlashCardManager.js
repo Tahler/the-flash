@@ -8,6 +8,13 @@ export default class FlashCardManager extends Component {
     this.state = {
       flashCards: loadFlashCards(),
     };
+
+    this.download = this.download.bind(this);
+  }
+
+  download() {
+    const content = JSON.stringify(this.state.flashCards);
+    downloadContent('flash_cards.json', content);
   }
 
   render() {
@@ -27,8 +34,21 @@ export default class FlashCardManager extends Component {
     ));
     return (
       <div>
-        {cards}
+        <button onClick={this.download}>Download</button>
+        <div>
+          {cards}
+        </div>
       </div>
     );
   }
+}
+
+function downloadContent(fileName, content) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+  element.setAttribute('download', fileName);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
 }
