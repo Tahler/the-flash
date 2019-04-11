@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { query } from './shared/query';
 import FlashCardCreator from './FlashCardCreator';
 
 export default class MultiCardCreator extends Component {
@@ -14,8 +13,6 @@ export default class MultiCardCreator extends Component {
       flashCards: [],
       wordIndex: -1,
       word: undefined,
-      imgUrls: [],
-      mp3Urls: [],
     };
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -30,15 +27,9 @@ export default class MultiCardCreator extends Component {
     if (!nextWord) {
       throw new Error(`no word at index ${nextWordIndex}`);
     }
-    const {
-      imgUrls,
-      mp3Urls,
-    } = await query(nextWord);
     this.setState({
       wordIndex: nextWordIndex,
       word: nextWord,
-      imgUrls,
-      mp3Urls,
     });
   }
 
@@ -74,14 +65,9 @@ export default class MultiCardCreator extends Component {
   }
 
   render() {
-    const {
-      imgUrls,
-      mp3Urls,
-    } = this.state;
     return (
       <FlashCardCreator
-          imgUrls={imgUrls}
-          mp3Urls={mp3Urls}
+          word={this.state.word}
           onSubmit={this.onSubmit}
       />
     );

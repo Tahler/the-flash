@@ -1,26 +1,48 @@
 import React, { Component } from 'react';
 import AudioSelector from './AudioSelector';
 import ImageSelector from './ImageSelector';
+import { query } from './shared/query';
 import './FlashCardCreator.css';
+
+const defaultState = {
+  currentWord: '',
+    imgUrls: [],
+  selectedImgUrls: new Set(),
+    mp3Urls: [],
+  selectedMp3Url: undefined,
+};
 
 export default class FlashCardCreator extends Component {
   static defaultProps = {
-    imgUrls: [],
-    mp3Urls: [],
+    word: '',
     onSubmit: () => {},
   };
 
   constructor(props) {
     super(props);
-    this.state = {
-      selectedImgUrls: new Set(),
-      selectedMp3Url: undefined,
-    };
+    this.state = defaultState;
 
     this.submit = this.submit.bind(this);
     this.addSelectedImgUrl = this.addSelectedImgUrl.bind(this);
     this.deleteSelectedImgUrl = this.deleteSelectedImgUrl.bind(this);
     this.setSelectedMp3Url = this.setSelectedMp3Url.bind(this);
+  }
+
+  async componentWillReceiveProps({word}) {
+    const {currentWord} = this.state;
+    if (currentWord !== word) {
+      if (word) {
+        const {
+          imgUrls,
+          mp3Urls,
+        } = await query(word);
+        this.setState({
+          imgUrls,
+          mp3Urls,
+          currentWord,
+        });
+      }
+    }
   }
 
   submit() {
@@ -48,12 +70,12 @@ export default class FlashCardCreator extends Component {
     return (
       <div>
         <ImageSelector
-            urls={this.props.imgUrls}
+            urls={this.state.imgUrls}
             onSelect={this.addSelectedImgUrl}
             onDeselect={this.deleteSelectedImgUrl}
         />
         <AudioSelector
-            urls={this.props.mp3Urls}
+            urls={this.state.mp3Urls}
             onSelectionChange={this.setSelectedMp3Url}
         />
         <button onClick={this.submit}>Submit</button>
