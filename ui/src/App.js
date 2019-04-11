@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import FlashCardManager from './FlashCardManager';
 import MultiCardCreator from './MultiCardCreator';
 import WordListEntry from './WordListEntry';
 import { loadFlashCards, saveFlashCards } from './shared/storage';
@@ -14,11 +15,9 @@ const page = {
 export default class App extends Component {
   constructor(props) {
     super(props);
-    const preloadedFlashCards = loadFlashCards();
     this.state = {
       page: page.menu,
       words: [],
-      flashCards: preloadedFlashCards || [],
     };
     this.receiveWords = this.receiveWords.bind(this);
     this.receiveFlashCards = this.receiveFlashCards.bind(this);
@@ -35,7 +34,6 @@ export default class App extends Component {
     saveFlashCards(flashCards);
     this.setState({
       page: page.viewFlashCards,
-      flashCards,
     })
   }
 
@@ -66,20 +64,7 @@ export default class App extends Component {
         );
         break;
       case page.viewFlashCards:
-        content = this.state.flashCards.map(card =>
-            <div key={card.word}>
-              <p>{card.word}</p>
-              <div>
-                {card.imageUrls.map(url => <img key={url} src={url} alt="" />)}
-              </div>
-              <div>
-                <audio controls key={card.audioUrl}>
-                  <source src={card.audioUrl} type="audio/mpeg" />
-                  Your browser does not support the audio element.
-                </audio>
-              </div>
-            </div>
-        );
+        content = <FlashCardManager />;
         break;
       default:
         throw new Error('impossible');
