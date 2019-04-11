@@ -3,6 +3,7 @@
   justify-content: center;
 }
 
-.selected {
-  border: 8px solid blue;
+img {
+  max-width: 300px;
+  max-height: 300px;
 }

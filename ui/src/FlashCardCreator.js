@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import SelectableAudio from './SelectableAudio';
-import SelectableImage from './SelectableImage';
+import Selectable from './Selectable';
 import { query } from './shared/query';
 import './FlashCardCreator.css';
 
@@ -25,7 +24,8 @@ export default class FlashCardCreator extends Component {
     this.submit = this.submit.bind(this);
     this.selectImgUrl = this.selectImgUrl.bind(this);
     this.deselectImgUrl = this.deselectImgUrl.bind(this);
-    this.setSelectedMp3Url = this.setSelectedMp3Url.bind(this);
+    this.toggleImgSelection = this.toggleImgSelection.bind(this);
+    this.toggleMp3Selection = this.toggleMp3Selection.bind(this);
   }
 
   async componentWillReceiveProps({word}) {
@@ -67,8 +67,16 @@ export default class FlashCardCreator extends Component {
     this.setState({selectedImgUrls});
   }
 
-  setSelectedMp3Url(url) {
-    this.setState({selectedMp3Url: url});
+  toggleImgSelection(url) {
+    const handle = this.state.selectedImgUrls.has(url) ?
+        this.deselectImgUrl :
+        this.selectImgUrl;
+    handle(url);
+  }
+
+  toggleMp3Selection(url) {
+    const selectedMp3Url = this.state.selectedMp3Url === url ? undefined : url;
+    this.setState({selectedMp3Url});
   }
 
   render() {
@@ -80,23 +88,30 @@ export default class FlashCardCreator extends Component {
     } = this.state;
 
     const imgs = imgUrls.map(url => (
-        <SelectableImage
+        <Selectable
             key={url}
-            url={url}
             isSelected={selectedImgUrls.has(url)}
-            onSelect={() => this.selectImgUrl(url)}
-            onDeselect={() => this.deselectImgUrl(url)}
-        />
+        >
+          <img
+              src={url}
+              alt=""
+              onClick={() => this.toggleImgSelection(url)}
+          />
+        </Selectable>
     ));
 
     const audios = mp3Urls.map(url => (
-        <SelectableAudio
+        <Selectable
             key={url}
-            url={url}
             isSelected={selectedMp3Url === url}
-            onSelect={() => this.setSelectedMp3Url(url)}
-            onDeselect={() => this.setSelectedMp3Url(undefined)}
-        />
+        >
+          <div onClick={() => this.toggleMp3Selection(url)}>
+            <audio controls>
+              <source src={url} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        </Selectable>
     ));
 
     return (

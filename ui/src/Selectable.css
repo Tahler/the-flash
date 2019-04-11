@@ -1,0 +1,10 @@
+.selectable {
+  margin: 16px;
+  border: 8px solid grey;
+  border-radius: 16px;
+  display: flex;
+}
+
+.selected {
+  border-color: blue;
+}
