@@ -2,9 +2,9 @@ async function fetchJson(url) {
   return fetch(url).then(response => response.json());
 }
 
-async function queryImages(query) {
+export async function queryImages(query, pageNum=0, pageSize=3) {
   const encodedQuery = encodeURIComponent(query);
-  return fetchJson(`http://localhost:5000/images/google/${encodedQuery}`);
+  return fetchJson(`http://localhost:5000/images/google/${encodedQuery}/${pageSize}/${pageNum}`);
 }
 
 async function queryAudio(query) {

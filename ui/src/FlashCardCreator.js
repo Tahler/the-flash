@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import SelectableAudio from './SelectableAudio';
 import SelectableImage from './SelectableImage';
-import { query } from './shared/query';
+import { query, queryImages } from './shared/query';
 import './FlashCardCreator.css';
 
 const defaultState = {
   currentWord: '',
   imgUrls: [],
+  currentImagePageNum: 0,
   selectedImgUrls: new Set(),
   mp3Urls: [],
   selectedMp3Url: undefined,
@@ -26,6 +27,7 @@ export default class FlashCardCreator extends Component {
     this.selectImgUrl = this.selectImgUrl.bind(this);
     this.deselectImgUrl = this.deselectImgUrl.bind(this);
     this.setSelectedMp3Url = this.setSelectedMp3Url.bind(this);
+    this.queryMoreImages = this.queryMoreImages.bind(this);
   }
 
   async componentWillReceiveProps({word}) {
@@ -43,6 +45,15 @@ export default class FlashCardCreator extends Component {
         });
       }
     }
+  }
+
+  async queryMoreImages() {
+    const {
+      currentImagePageNum,
+    } = this.state;
+    const nextImagePageNum = currentImagePageNum + 1;
+    const imgUrls = await queryImages(this.props.word, nextImagePageNum);
+    this.setState({imgUrls, currentImagePageNum: nextImagePageNum});
   }
 
   submit() {
@@ -105,6 +116,7 @@ export default class FlashCardCreator extends Component {
         <div className="selector">
           {imgs}
         </div>
+        <button onClick={this.queryMoreImages}>More</button>
         <div className="selector">
           {audios}
         </div>
