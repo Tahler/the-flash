@@ -55,15 +55,14 @@ export default class App extends Component {
         );
         break;
       case page.wordListEntry:
-        content = <WordListEntry onSubmit={this.receiveWords}></WordListEntry>;
+        content = <WordListEntry onSubmit={this.receiveWords} />;
         break;
       case page.createFlashCards:
         content = (
             <MultiCardCreator
                 words={this.state.words}
                 onComplete={this.receiveFlashCards}
-            >
-            </MultiCardCreator>
+            />
         );
         break;
       case page.viewFlashCards:
