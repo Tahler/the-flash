@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import MultiCardCreator from './MultiCardCreator';
 import WordListEntry from './WordListEntry';
+import { loadFlashCards, saveFlashCards } from './shared/storage';
 import './App.css';
 
 const stage = {
@@ -12,10 +13,11 @@ const stage = {
 export default class App extends Component {
   constructor(props) {
     super(props);
+    const preloadedFlashCards = loadFlashCards();
     this.state = {
-      stage: stage.wordListEntry,
+      stage: preloadedFlashCards ? stage.complete : stage.wordListEntry,
       words: [],
-      flashCards: [],
+      flashCards: preloadedFlashCards || [],
     };
     this.receiveWords = this.receiveWords.bind(this);
     this.receiveFlashCards = this.receiveFlashCards.bind(this);
@@ -29,6 +31,7 @@ export default class App extends Component {
   }
 
   receiveFlashCards(flashCards) {
+    saveFlashCards(flashCards);
     this.setState({
       stage: stage.complete,
       flashCards,
