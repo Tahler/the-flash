@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import FlashCardManager from './FlashCardManager';
 import MultiCardCreator from './MultiCardCreator';
 import WordListEntry from './WordListEntry';
-import { loadFlashCards, saveFlashCards } from './shared/storage';
+import { appendFlashCards } from './shared/storage';
 import './App.css';
 
 const page = {
@@ -31,7 +31,7 @@ export default class App extends Component {
   }
 
   receiveFlashCards(flashCards) {
-    saveFlashCards(flashCards);
+    appendFlashCards(flashCards);
     this.setState({
       page: page.viewFlashCards,
     })

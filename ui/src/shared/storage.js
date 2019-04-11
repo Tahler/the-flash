@@ -7,6 +7,8 @@ export function loadFlashCards() {
       JSON.parse(json);
 }
 
-export function saveFlashCards(flashCards) {
-  localStorage.flashCards = JSON.stringify(flashCards);
+export function appendFlashCards(flashCards) {
+  const currentFlashCards = loadFlashCards();
+  const newFlashCards = [...currentFlashCards, ...flashCards];
+  localStorage.flashCards = JSON.stringify(newFlashCards);
 }
