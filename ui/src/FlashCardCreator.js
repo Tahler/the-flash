@@ -7,7 +7,8 @@ import './FlashCardCreator.css';
 const defaultState = {
   currentWord: '',
   imgUrls: [],
-  currentImagePageNum: 0,
+  currentImgPageOffset: 0,
+  currentImgPageSize: 3,
   selectedImgUrls: new Set(),
   mp3Urls: [],
   selectedMp3Url: undefined,
@@ -27,7 +28,7 @@ export default class FlashCardCreator extends Component {
     this.selectImgUrl = this.selectImgUrl.bind(this);
     this.deselectImgUrl = this.deselectImgUrl.bind(this);
     this.setSelectedMp3Url = this.setSelectedMp3Url.bind(this);
-    this.queryMoreImages = this.queryMoreImages.bind(this);
+    this.requestMoreImages = this.requestMoreImages.bind(this);
   }
 
   async componentWillReceiveProps({word}) {
@@ -47,13 +48,21 @@ export default class FlashCardCreator extends Component {
     }
   }
 
-  async queryMoreImages() {
+  async requestMoreImages() {
     const {
-      currentImagePageNum,
+      currentImgPageOffset,
+      currentImgPageSize,
+      imgUrls,
     } = this.state;
-    const nextImagePageNum = currentImagePageNum + 1;
-    const imgUrls = await queryImages(this.props.word, nextImagePageNum);
-    this.setState({imgUrls, currentImagePageNum: nextImagePageNum});
+
+    const nextOffset = currentImgPageOffset + currentImgPageSize;
+    const nextSize = currentImgPageSize * 2;
+    const moreImgUrls = await queryImages(this.props.word, nextOffset, nextSize);
+    this.setState({
+      imgUrls: [...imgUrls, ...moreImgUrls],
+      currentImgPageOffset: nextOffset,
+      currentImgPageSize: nextSize,
+    });
   }
 
   submit() {
@@ -116,7 +125,7 @@ export default class FlashCardCreator extends Component {
         <div className="selector">
           {imgs}
         </div>
-        <button onClick={this.queryMoreImages}>More</button>
+        <button onClick={this.requestMoreImages}>More</button>
         <div className="selector">
           {audios}
         </div>
