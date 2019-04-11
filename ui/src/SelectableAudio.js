@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import './ImageSelector.css';
+import './SelectableAudio.css';
 
-export class SelectableImage extends Component {
+// TODO: customize controls: only play button plus clickable area?
+export default class SelectableAudio extends Component {
   static defaultProps = {
     url: '',
     isSelected: false,
@@ -26,13 +27,13 @@ export class SelectableImage extends Component {
       isSelected,
       url,
     } = this.props;
+    const selectedClass = isSelected ? 'selected' : '';
+    const classes = `audio-container ${selectedClass}`;
     return (
-      <img
-          src={url}
-          alt=""
-          onClick={() => this.toggleSelect(this.props.url)}
-          className={isSelected ? 'selected' : ''}
-      />
+      <audio controls className={classes} onClick={this.toggleSelect}>
+        <source src={url} type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
     );
   }
 }
