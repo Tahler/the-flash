@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import AudioSelector from './AudioSelector';
-import ImageSelector from './ImageSelector';
+import { SelectableAudio } from './AudioSelector';
+import { SelectableImage } from './ImageSelector';
 import { query } from './shared/query';
 import './FlashCardCreator.css';
 
 const defaultState = {
   currentWord: '',
-    imgUrls: [],
+  imgUrls: [],
   selectedImgUrls: new Set(),
-    mp3Urls: [],
+  mp3Urls: [],
   selectedMp3Url: undefined,
 };
 
@@ -23,8 +23,8 @@ export default class FlashCardCreator extends Component {
     this.state = defaultState;
 
     this.submit = this.submit.bind(this);
-    this.addSelectedImgUrl = this.addSelectedImgUrl.bind(this);
-    this.deleteSelectedImgUrl = this.deleteSelectedImgUrl.bind(this);
+    this.selectImgUrl = this.selectImgUrl.bind(this);
+    this.deselectImgUrl = this.deselectImgUrl.bind(this);
     this.setSelectedMp3Url = this.setSelectedMp3Url.bind(this);
   }
 
@@ -50,16 +50,21 @@ export default class FlashCardCreator extends Component {
       imageUrls: [...this.state.selectedImgUrls],
       audioUrl: this.state.selectedMp3Url,
     }));
+    console.log(defaultState);
+    this.setState(defaultState);
   }
 
-  addSelectedImgUrl(url) {
-    this.state.selectedImgUrls.add(url);
-    this.setState({selectedImgUrls: this.state.selectedImgUrls});
+  selectImgUrl(url) {
+    const selectedImgUrls = new Set([...this.state.selectedImgUrls, url]);
+    this.setState({selectedImgUrls});
   }
 
-  deleteSelectedImgUrl(url) {
-    this.state.selectedImgUrls.delete(url);
-    this.setState({selectedImgUrls: this.state.selectedImgUrls});
+  deselectImgUrl(url) {
+    // TODO: find a better way to delete immutably.
+    const selectedImgUrls = new Set(
+        [...this.state.selectedImgUrls].filter(
+            selectedUrl => url !== selectedUrl));
+    this.setState({selectedImgUrls});
   }
 
   setSelectedMp3Url(url) {
@@ -67,24 +72,49 @@ export default class FlashCardCreator extends Component {
   }
 
   render() {
+    const {
+      imgUrls,
+      selectedImgUrls,
+      mp3Urls,
+      selectedMp3Url,
+    } = this.state;
+
+    const imgs = imgUrls.map(url => (
+        <SelectableImage
+            key={url}
+            url={url}
+            isSelected={selectedImgUrls.has(url)}
+            onSelect={() => this.selectImgUrl(url)}
+            onDeselect={() => this.deselectImgUrl(url)}
+        />
+    ));
+
+    const audios = mp3Urls.map(url => (
+        <SelectableAudio
+            key={url}
+            url={url}
+            isSelected={selectedMp3Url === url}
+            onSelect={() => this.setSelectedMp3Url(url)}
+            onDeselect={() => this.setSelectedMp3Url(undefined)}
+        />
+    ));
+
     return (
       <div>
-        <ImageSelector
-            urls={this.state.imgUrls}
-            onSelect={this.addSelectedImgUrl}
-            onDeselect={this.deleteSelectedImgUrl}
-        />
-        <AudioSelector
-            urls={this.state.mp3Urls}
-            onSelectionChange={this.setSelectedMp3Url}
-        />
+        <h3>{this.props.word}</h3>
+        <div className="selector">
+          {imgs}
+        </div>
+        <div className="selector">
+          {audios}
+        </div>
         <button onClick={this.submit}>Submit</button>
       </div>
     );
   }
 }
 
-class FlashCard {
+export class FlashCard {
   constructor({imageUrls, audioUrl}) {
     this.imageUrls = imageUrls;
     this.audioUrl = audioUrl;

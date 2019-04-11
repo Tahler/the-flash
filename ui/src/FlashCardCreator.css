@@ -1,3 +1,8 @@
+.selector {
+  display: flex;
+  justify-content: center;
+}
+
 .selected {
   border: 8px solid blue;
 }
