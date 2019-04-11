@@ -28,14 +28,16 @@ export default class SelectableAudio extends Component {
       url,
     } = this.props;
     return (
-      <audio
-          controls
-          className={isSelected ? 'selected' : ''}
+      <div
+          className={`selectable-audio ${isSelected ? 'selected' : ''}`}
           onClick={this.toggleSelect}
       >
-        <source src={url} type="audio/mpeg" />
-        Your browser does not support the audio element.
-      </audio>
+        <input type="radio" checked={isSelected} />
+        <audio controls>
+          <source src={url} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
     );
   }
 }
