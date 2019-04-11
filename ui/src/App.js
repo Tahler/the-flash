@@ -4,10 +4,10 @@ import WordListEntry from './WordListEntry';
 import { loadFlashCards, saveFlashCards } from './shared/storage';
 import './App.css';
 
-const stage = {
+const page = {
   wordListEntry: 0,
   createFlashCards: 1,
-  complete: 2,
+  viewFlashCards: 2,
 };
 
 export default class App extends Component {
@@ -15,7 +15,7 @@ export default class App extends Component {
     super(props);
     const preloadedFlashCards = loadFlashCards();
     this.state = {
-      stage: preloadedFlashCards ? stage.complete : stage.wordListEntry,
+      page: preloadedFlashCards ? page.viewFlashCards : page.wordListEntry,
       words: [],
       flashCards: preloadedFlashCards || [],
     };
@@ -25,7 +25,7 @@ export default class App extends Component {
 
   receiveWords(words) {
     this.setState({
-      stage: stage.createFlashCards,
+      page: page.createFlashCards,
       words,
     })
   }
@@ -33,18 +33,18 @@ export default class App extends Component {
   receiveFlashCards(flashCards) {
     saveFlashCards(flashCards);
     this.setState({
-      stage: stage.complete,
+      page: page.viewFlashCards,
       flashCards,
     })
   }
 
   render() {
     let content;
-    switch (this.state.stage) {
-      case stage.wordListEntry:
+    switch (this.state.page) {
+      case page.wordListEntry:
         content = <WordListEntry onSubmit={this.receiveWords}></WordListEntry>;
         break;
-      case stage.createFlashCards:
+      case page.createFlashCards:
         content = (
             <MultiCardCreator
                 words={this.state.words}
@@ -53,7 +53,7 @@ export default class App extends Component {
             </MultiCardCreator>
         );
         break;
-      case stage.complete:
+      case page.viewFlashCards:
         content = this.state.flashCards.map(card =>
             <div key={card.word}>
               <p>{card.word}</p>
