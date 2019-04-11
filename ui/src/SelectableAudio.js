@@ -27,10 +27,12 @@ export default class SelectableAudio extends Component {
       isSelected,
       url,
     } = this.props;
-    const selectedClass = isSelected ? 'selected' : '';
-    const classes = `audio-container ${selectedClass}`;
     return (
-      <audio controls className={classes} onClick={this.toggleSelect}>
+      <audio
+          controls
+          className={isSelected ? 'selected' : ''}
+          onClick={this.toggleSelect}
+      >
         <source src={url} type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
