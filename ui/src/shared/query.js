@@ -7,7 +7,7 @@ export async function queryImages(query, offset=0, size=3) {
   return fetchJson(`http://localhost:5000/images/google/${encodedQuery}/${offset}/${size}`);
 }
 
-async function queryAudio(query, offset=0, size=3) {
+export async function queryAudios(query, offset=0, size=2) {
   const encodedQuery = encodeURIComponent(query);
   return fetchJson(`http://localhost:5000/audio/forvo/${encodedQuery}/${offset}/${size}`);
 }
@@ -15,6 +15,6 @@ async function queryAudio(query, offset=0, size=3) {
 export async function query(query) {
   return Promise.all([
     queryImages(query),
-    queryAudio(query),
+    queryAudios(query),
   ]).then(([imgUrls, mp3Urls]) => ({imgUrls, mp3Urls}));
 }

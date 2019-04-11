@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import SelectableAudio from './SelectableAudio';
 import SelectableImage from './SelectableImage';
-import { query, queryImages } from './shared/query';
+import { query, queryImages, queryAudios } from './shared/query';
 import './FlashCardCreator.css';
 
 const defaultState = {
   currentWord: '',
-  imgUrls: [],
+
   currentImgPageOffset: 0,
   currentImgPageSize: 3,
+  imgUrls: [],
   selectedImgUrls: new Set(),
+
+  currentMp3PageOffset: 0,
+  currentMp3PageSize: 2,
   mp3Urls: [],
   selectedMp3Url: undefined,
 };
@@ -25,16 +29,20 @@ export default class FlashCardCreator extends Component {
     this.state = defaultState;
 
     this.submit = this.submit.bind(this);
+
     this.selectImgUrl = this.selectImgUrl.bind(this);
     this.deselectImgUrl = this.deselectImgUrl.bind(this);
-    this.setSelectedMp3Url = this.setSelectedMp3Url.bind(this);
     this.requestMoreImages = this.requestMoreImages.bind(this);
+
+    this.setSelectedMp3Url = this.setSelectedMp3Url.bind(this);
+    this.requestMoreAudios = this.requestMoreAudios.bind(this);
   }
 
   async componentWillReceiveProps({word}) {
     const {currentWord} = this.state;
     if (currentWord !== word) {
       if (word) {
+        // TODO: query separately, just use requestMore?
         const {
           imgUrls,
           mp3Urls,
@@ -62,6 +70,23 @@ export default class FlashCardCreator extends Component {
       imgUrls: [...imgUrls, ...moreImgUrls],
       currentImgPageOffset: nextOffset,
       currentImgPageSize: nextSize,
+    });
+  }
+
+  async requestMoreAudios() {
+    const {
+      currentMp3PageOffset,
+      currentMp3PageSize,
+      mp3Urls,
+    } = this.state;
+
+    const nextOffset = currentMp3PageOffset + currentMp3PageSize;
+    const nextSize = currentMp3PageSize * 2;
+    const moreMp3Urls = await queryAudios(this.props.word, nextOffset, nextSize);
+    this.setState({
+      mp3Urls: [...mp3Urls, ...moreMp3Urls],
+      currentMp3PageOffset: nextOffset,
+      currentMp3PageSize: nextSize,
     });
   }
 
@@ -129,12 +154,15 @@ export default class FlashCardCreator extends Component {
         <div className="selector">
           {audios}
         </div>
+        <button onClick={this.requestMoreAudios}>More</button>
+        <br />
         <button onClick={this.submit}>Submit</button>
       </div>
     );
   }
 }
 
+// TODO: remove this
 export class FlashCard {
   constructor({imageUrls, audioUrl}) {
     this.imageUrls = imageUrls;
