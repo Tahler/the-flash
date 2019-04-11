@@ -16,8 +16,8 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      page: page.menu,
-      words: [],
+      page: page.createFlashCards,
+      words: ['hello', 'everybody'],
     };
     this.receiveWords = this.receiveWords.bind(this);
     this.receiveFlashCards = this.receiveFlashCards.bind(this);

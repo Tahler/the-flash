@@ -1,16 +1,8 @@
 import React, { Component } from 'react';
+import ImageSelector from './ImageSelector';
 import SelectableAudio from './SelectableAudio';
-import SelectableImage from './SelectableImage';
 import { query } from './shared/query';
 import './FlashCardCreator.css';
-
-const defaultState = {
-  currentWord: '',
-  imgUrls: [],
-  selectedImgUrls: new Set(),
-  mp3Urls: [],
-  selectedMp3Url: undefined,
-};
 
 export default class FlashCardCreator extends Component {
   static defaultProps = {
@@ -20,16 +12,19 @@ export default class FlashCardCreator extends Component {
 
   constructor(props) {
     super(props);
-    this.state = defaultState;
+    this.state = {
+      imgUrls: [],
+      mp3Urls: [],
+      flashCard: {},
+    };
 
     this.submit = this.submit.bind(this);
-    this.selectImgUrl = this.selectImgUrl.bind(this);
-    this.deselectImgUrl = this.deselectImgUrl.bind(this);
+    this.setSelectedImgUrls = this.setSelectedImgUrls.bind(this);
     this.setSelectedMp3Url = this.setSelectedMp3Url.bind(this);
   }
 
   async componentWillReceiveProps({word}) {
-    const {currentWord} = this.state;
+    const currentWord = this.state.flashCard.currentWord;
     if (currentWord !== word) {
       if (word) {
         const {
@@ -39,31 +34,18 @@ export default class FlashCardCreator extends Component {
         this.setState({
           imgUrls,
           mp3Urls,
-          currentWord,
+          flashCard: {word},
         });
       }
     }
   }
 
   submit() {
-    this.props.onSubmit(new FlashCard({
-      imageUrls: [...this.state.selectedImgUrls],
-      audioUrl: this.state.selectedMp3Url,
-    }));
-    console.log(defaultState);
-    this.setState(defaultState);
+    this.props.onSubmit(this.state.currentFlashCard);
+    this.setState({currentFlashCard: {}});
   }
 
-  selectImgUrl(url) {
-    const selectedImgUrls = new Set([...this.state.selectedImgUrls, url]);
-    this.setState({selectedImgUrls});
-  }
-
-  deselectImgUrl(url) {
-    // TODO: find a better way to delete immutably.
-    const selectedImgUrls = new Set(
-        [...this.state.selectedImgUrls].filter(
-            selectedUrl => url !== selectedUrl));
+  setSelectedImgUrls(selectedImgUrls) {
     this.setState({selectedImgUrls});
   }
 
@@ -74,20 +56,9 @@ export default class FlashCardCreator extends Component {
   render() {
     const {
       imgUrls,
-      selectedImgUrls,
       mp3Urls,
       selectedMp3Url,
     } = this.state;
-
-    const imgs = imgUrls.map(url => (
-        <SelectableImage
-            key={url}
-            url={url}
-            isSelected={selectedImgUrls.has(url)}
-            onSelect={() => this.selectImgUrl(url)}
-            onDeselect={() => this.deselectImgUrl(url)}
-        />
-    ));
 
     const audios = mp3Urls.map(url => (
         <SelectableAudio
@@ -102,9 +73,7 @@ export default class FlashCardCreator extends Component {
     return (
       <div>
         <h3>{this.props.word}</h3>
-        <div className="selector">
-          {imgs}
-        </div>
+        <ImageSelector imgUrls={imgUrls} onSelectionChange={this.setSelectedImgUrls} />
         <div className="selector">
           {audios}
         </div>
@@ -113,6 +82,8 @@ export default class FlashCardCreator extends Component {
     );
   }
 }
+
+let prev = [];
 
 export class FlashCard {
   constructor({imageUrls, audioUrl}) {
