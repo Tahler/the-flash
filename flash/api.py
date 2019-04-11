@@ -1,3 +1,4 @@
+# TODO: these page vars should be query params
 import itertools
 from typing import Iterable
 
@@ -16,16 +17,13 @@ def json_cors(*args, **kwargs) -> flask.Response:
 
 
 def paged_json_cors(
-      iterable: Iterable[any], page_size: int, page_num: int) -> flask.Response:
-    start = page_num * page_size
-    end = start + page_size
-    page = list(itertools.islice(iterable, start, end))
+      iterable: Iterable[any], offset: int, size: int) -> flask.Response:
+    page = list(itertools.islice(iterable, offset, offset + size))
     return json_cors(page)
 
 
-@app.route('/audio/forvo/<query>/<int:page_size>/<int:page_num>')
-def query_audio_forvo(
-        query: str, page_size: int, page_num: int) -> flask.Response:
+@app.route('/audio/forvo/<query>/<int:offset>/<int:size>')
+def query_audio_forvo(query: str, offset: int, size: int) -> flask.Response:
     # urls = list(forvo.query(query))
     urls = [
       'http://localhost:5000/static/montaña1.mp3',
@@ -34,12 +32,11 @@ def query_audio_forvo(
       'http://localhost:5000/static/montaña4.mp3',
       'http://localhost:5000/static/montaña5.mp3',
     ]
-    return paged_json_cors(urls, page_size, page_num)
+    return paged_json_cors(urls, offset, size)
 
 
-@app.route('/images/google/<query>/<int:page_size>/<int:page_num>')
-def query_images_google(
-        query: str, page_size: int, page_num: int) -> flask.Response:
+@app.route('/images/google/<query>/<int:offset>/<int:size>')
+def query_images_google(query: str, offset: int, size: int) -> flask.Response:
     # urls = list(google_images.query(query))
     urls = [
       'http://localhost:5000/static/montaña1.jpg',
@@ -49,16 +46,16 @@ def query_images_google(
       'http://localhost:5000/static/montaña5.jpg',
       'http://localhost:5000/static/montaña6.jpg',
     ]
-    return paged_json_cors(urls, page_size, page_num)
+    return paged_json_cors(urls, offset, size)
 
 
-@app.route('/examples/tatoeba/<query>/<int:page_size>/<int:page_num>')
+@app.route('/examples/tatoeba/<query>/<int:offset>/<int:size>')
 def query_examples_tatoeba(
-        query: str, page_size: int, page_num: int) -> flask.Response:
+        query: str, offset: int, size: int) -> flask.Response:
     # examples = [s for s, _ in sentences.query(query)]
     examples = [
       'Escalo montañas.',
       'Mira esa montaña.',
       'Mirá esa montaña.',
     ]
-    return paged_json_cors(examples, page_size, page_num)
+    return paged_json_cors(examples, offset, size)
