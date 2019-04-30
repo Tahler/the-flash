@@ -1,7 +1,6 @@
 # Needed
 
 - Download flash cards in the right format
-- Query params for page size and offset
 
 # Next Steps
 
