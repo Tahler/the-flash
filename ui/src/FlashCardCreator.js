@@ -121,11 +121,11 @@ export default class FlashCardCreator extends Component {
   }
 
   submit() {
-    this.props.onSubmit(new FlashCard({
+    this.props.onSubmit({
       imageUrls: [...this.state.selectedImgUrls],
       audioUrl: this.state.selectedMp3Url,
       examples: [...this.state.examples],
-    }));
+    });
     console.log(defaultState);
     this.setState(defaultState);
   }
@@ -218,14 +218,5 @@ export default class FlashCardCreator extends Component {
         <button onClick={this.submit}>Submit</button>
       </div>
     );
-  }
-}
-
-// TODO: remove this
-export class FlashCard {
-  constructor({imageUrls, audioUrl, examples}) {
-    this.imageUrls = imageUrls;
-    this.audioUrl = audioUrl;
-    this.examples = examples;
   }
 }
