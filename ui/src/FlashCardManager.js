@@ -13,8 +13,16 @@ export default class FlashCardManager extends Component {
   }
 
   download() {
-    const content = JSON.stringify(this.state.flashCards);
-    downloadContent('flash_cards.json', content);
+    const header = 'name,images,audio,examples';
+    const cardRows = this.state.flashCards.map(card => {
+      const imgs = card.imageUrls.map(url => `<img src="${url}">`).join(';');
+      const sound = `[sound:${card.audioUrl}]`;
+      const fields = [card.word, imgs, sound, card.examples];
+      return fields.join(',');
+    });
+    const rows = [header, ...cardRows];
+    const content = rows.join('\n');
+    downloadContent('flash_cards.csv', content);
   }
 
   render() {
