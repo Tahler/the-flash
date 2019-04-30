@@ -57,5 +57,8 @@ def query_examples_tatoeba(
       'Escalo montañas.',
       'Mira esa montaña.',
       'Mirá esa montaña.',
+      'Escalo montañas.',
+      'Mira esa montaña.',
+      'Mirá esa montaña.',
     ]
     return paged_json_cors(examples, offset, size)

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import SelectableAudio from './SelectableAudio';
 import SelectableImage from './SelectableImage';
-import { query, queryImages, queryAudios } from './shared/query';
+import { query, queryImages, queryAudios, queryExamples } from './shared/query';
 import './FlashCardCreator.css';
+import SelectableText from './SelectableText';
 
 const defaultState = {
   currentWord: '',
@@ -16,6 +17,11 @@ const defaultState = {
   currentMp3PageSize: 2,
   mp3Urls: [],
   selectedMp3Url: undefined,
+
+  currentExamplePageOffset: 0,
+  currentExamplePageSize: 3,
+  examples: [],
+  selectedExamples: new Set(),
 };
 
 export default class FlashCardCreator extends Component {
@@ -36,6 +42,10 @@ export default class FlashCardCreator extends Component {
 
     this.setSelectedMp3Url = this.setSelectedMp3Url.bind(this);
     this.requestMoreAudios = this.requestMoreAudios.bind(this);
+
+    this.selectExample = this.selectExample.bind(this);
+    this.deselectExample = this.deselectExample.bind(this);
+    this.requestMoreExamples = this.requestMoreExamples.bind(this);
   }
 
   async componentWillReceiveProps({word}) {
@@ -46,10 +56,12 @@ export default class FlashCardCreator extends Component {
         const {
           imgUrls,
           mp3Urls,
+          examples,
         } = await query(word);
         this.setState({
           imgUrls,
           mp3Urls,
+          examples,
           currentWord,
         });
       }
@@ -90,10 +102,28 @@ export default class FlashCardCreator extends Component {
     });
   }
 
+  async requestMoreExamples() {
+    const {
+      currentExamplePageOffset,
+      currentExamplePageSize,
+      examples,
+    } = this.state;
+
+    const nextOffset = currentExamplePageOffset + currentExamplePageSize;
+    const nextSize = currentExamplePageSize * 2;
+    const moreExamples = await queryExamples(this.props.word, nextOffset, nextSize);
+    this.setState({
+      examples: [...examples, ...moreExamples],
+      currentExamplePageOffset: nextOffset,
+      currentExamplePageSize: nextSize,
+    });
+  }
+
   submit() {
     this.props.onSubmit(new FlashCard({
       imageUrls: [...this.state.selectedImgUrls],
       audioUrl: this.state.selectedMp3Url,
+      examples: [...this.state.examples],
     }));
     console.log(defaultState);
     this.setState(defaultState);
@@ -116,12 +146,26 @@ export default class FlashCardCreator extends Component {
     this.setState({selectedMp3Url: url});
   }
 
+  selectExample(example) {
+    const selectedExamples = new Set([...this.state.selectedExamples, example]);
+    this.setState({selectedExamples});
+  }
+
+  deselectExample(example) {
+    const selectedExamples = new Set(
+        [...this.state.selectedExamples].filter(
+            selectedExample => example !== selectedExample));
+    this.setState({selectedExamples});
+  }
+
   render() {
     const {
       imgUrls,
       selectedImgUrls,
       mp3Urls,
       selectedMp3Url,
+      examples,
+      selectedExamples,
     } = this.state;
 
     const imgs = imgUrls.map(url => (
@@ -144,6 +188,16 @@ export default class FlashCardCreator extends Component {
         />
     ));
 
+    const texts = examples.map(example => (
+        <SelectableText
+            key={example}
+            text={example}
+            isSelected={selectedExamples.has(example)}
+            onSelect={() => this.selectExample(example)}
+            onDeselect={() => this.deselectExample(example)}
+        />
+    ));
+
     return (
       <div>
         <h3>{this.props.word}</h3>
@@ -155,6 +209,10 @@ export default class FlashCardCreator extends Component {
           {audios}
         </div>
         <button onClick={this.requestMoreAudios}>More</button>
+        <div className="selector">
+          {texts}
+        </div>
+        <button onClick={this.requestMoreExamples}>More</button>
         <br />
         <button onClick={this.submit}>Submit</button>
       </div>
@@ -164,8 +222,9 @@ export default class FlashCardCreator extends Component {
 
 // TODO: remove this
 export class FlashCard {
-  constructor({imageUrls, audioUrl}) {
+  constructor({imageUrls, audioUrl, examples}) {
     this.imageUrls = imageUrls;
     this.audioUrl = audioUrl;
+    this.examples = examples;
   }
 }
