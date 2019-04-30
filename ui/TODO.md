@@ -1,4 +1,5 @@
 - Download flash cards in the right format
+- Query params for page size and offset
 - Create a CheckboxSelector and RadioSelector (branch: `selector`)
   - Each takes the list of tuples, `[[content, component]]`, and notifies
     `onSelectionChange`, gives the selected list of content
@@ -8,3 +9,4 @@
 - Customize audio control style
   - Just need play button
 - Save flash cards to cloud
+- Make a "page" class which becomes query params and grows size, etc.
