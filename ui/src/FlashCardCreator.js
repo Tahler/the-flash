@@ -5,21 +5,31 @@ import { query, queryImages, queryAudios, queryExamples } from './shared/query';
 import './FlashCardCreator.css';
 import SelectableText from './SelectableText';
 
+class Page {
+  constructor({offset, size}) {
+    this.offset = offset;
+    this.size = size;
+  }
+
+  next() {
+    const offset = this.offset + this.size;
+    const size = this.size * 2;
+    return new Page({offset, size});
+  }
+}
+
 const defaultState = {
   currentWord: '',
 
-  currentImgPageOffset: 0,
-  currentImgPageSize: 3,
+  imgPage: new Page({offset: 0, size: 3}),
   imgUrls: [],
   selectedImgUrls: new Set(),
 
-  currentMp3PageOffset: 0,
-  currentMp3PageSize: 2,
+  mp3Page: new Page({offset: 0, size: 2}),
   mp3Urls: [],
   selectedMp3Url: undefined,
 
-  currentExamplePageOffset: 0,
-  currentExamplePageSize: 3,
+  examplePage: new Page({offset: 0, size: 3}),
   examples: [],
   selectedExamples: new Set(),
 };
@@ -70,52 +80,43 @@ export default class FlashCardCreator extends Component {
 
   async requestMoreImages() {
     const {
-      currentImgPageOffset,
-      currentImgPageSize,
+      imgPage,
       imgUrls,
     } = this.state;
 
-    const nextOffset = currentImgPageOffset + currentImgPageSize;
-    const nextSize = currentImgPageSize * 2;
-    const moreImgUrls = await queryImages(this.props.word, nextOffset, nextSize);
+    const nextPage = imgPage.next();
+    const moreImgUrls = await queryImages(this.props.word, nextPage.offset, nextPage.size);
     this.setState({
+      imgPage: nextPage,
       imgUrls: [...imgUrls, ...moreImgUrls],
-      currentImgPageOffset: nextOffset,
-      currentImgPageSize: nextSize,
     });
   }
 
   async requestMoreAudios() {
     const {
-      currentMp3PageOffset,
-      currentMp3PageSize,
+      mp3Page,
       mp3Urls,
     } = this.state;
 
-    const nextOffset = currentMp3PageOffset + currentMp3PageSize;
-    const nextSize = currentMp3PageSize * 2;
-    const moreMp3Urls = await queryAudios(this.props.word, nextOffset, nextSize);
+    const nextPage = mp3Page.next();
+    const moreMp3Urls = await queryAudios(this.props.word, nextPage.offset, nextPage.size);
     this.setState({
+      mp3Page: nextPage,
       mp3Urls: [...mp3Urls, ...moreMp3Urls],
-      currentMp3PageOffset: nextOffset,
-      currentMp3PageSize: nextSize,
     });
   }
 
   async requestMoreExamples() {
     const {
-      currentExamplePageOffset,
-      currentExamplePageSize,
+      examplePage,
       examples,
     } = this.state;
 
-    const nextOffset = currentExamplePageOffset + currentExamplePageSize;
-    const nextSize = currentExamplePageSize * 2;
-    const moreExamples = await queryExamples(this.props.word, nextOffset, nextSize);
+    const nextPage = examplePage.next();
+    const moreExamples = await queryExamples(this.props.word, nextPage.offset, nextPage.size);
     this.setState({
+      examplePage: nextPage,
       examples: [...examples, ...moreExamples],
-      currentExamplePageOffset: nextOffset,
-      currentExamplePageSize: nextSize,
     });
   }
 
