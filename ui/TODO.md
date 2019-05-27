@@ -1,6 +1,7 @@
 # Needed
 
 - Download flash cards in the right format
+  - Create a template with spots for the word and up to three images, one audio, three examples?
 
 # Next Steps
 
