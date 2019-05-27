@@ -17,7 +17,9 @@ export default class FlashCardManager extends Component {
     const cardRows = this.state.flashCards.map(card => {
       const imgs = card.imageUrls.map(url => `<img src="${url}">`).join(';');
       const sound = `[sound:${card.audioUrl}]`;
-      const fields = [card.word, imgs, sound, card.examples];
+      const examples = card.examples.join(';');
+      const fields = [card.word, imgs, sound, examples]
+          .map(f => `"${f}"`);
       return fields.join(',');
     });
     const rows = [header, ...cardRows];
