@@ -17,3 +17,4 @@
 - Customize audio control style
   - Just need play button
 - Make a "page" class which becomes query params and grows size, etc.
+- Bootstrap import components directly

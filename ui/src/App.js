@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Nav, Navbar } from 'react-bootstrap';
 import FlashCardManager from './FlashCardManager';
 import MultiCardCreator from './MultiCardCreator';
 import WordListEntry from './WordListEntry';
@@ -71,6 +72,16 @@ export default class App extends Component {
     }
     return (
       <div className="App">
+        <Navbar bg="dark" variant="dark" expand="lg">
+          <Navbar.Brand href="#home">Flash Card Creator</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="mr-auto">
+              <Nav.Link href="#home">Home</Nav.Link>
+              <Nav.Link href="#link">Link</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
         {content}
       </div>
     );
