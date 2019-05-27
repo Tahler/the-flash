@@ -73,12 +73,18 @@ export default class App extends Component {
     return (
       <div className="App">
         <Navbar bg="dark" variant="dark" expand="lg">
-          <Navbar.Brand href="#home">Flash Card Creator</Navbar.Brand>
+          <Navbar.Brand onClick={() => this.setState({page: page.menu})}>
+            Flash Card Creator
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
-              <Nav.Link href="#link">Link</Nav.Link>
+              <Nav.Link onClick={() => this.setState({page: page.wordListEntry})}>
+                Create
+              </Nav.Link>
+              <Nav.Link onClick={() => this.setState({page: page.viewFlashCards})}>
+                View
+              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
