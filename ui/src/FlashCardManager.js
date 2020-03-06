@@ -18,54 +18,61 @@ export default class FlashCardManager extends Component {
     return splits[splits.length - 1];
   }
 
-  async download() {
-    const blobbedCards = await this.state.flashCards.map(async card => {
-      const namedImageBlobs = await card.imageUrls.map(async (url, i) => {
+  download() {
+    const blobbedCardsPromises = this.state.flashCards.map(card => {
+      const namedImageBlobsPromises = card.imageUrls.map((url, i) => {
         const ext = this.extractExtension(url);
         // TODO: parallelize these fetches
-        const blob = await fetch(url, { mode: 'no-cors' }).then(r => r.blob());
-        // TODO: enforce unique words
-        return [`${card.word}-${i}.${ext}`, blob];
+        return fetch(url, { mode: 'no-cors' }).then(r => r.blob()).then(blob => {
+          // TODO: enforce unique words
+          return [`${card.word}-${i}.${ext}`, blob];
+        });
       });
-      // TODO: this is returning promises
-      console.log(namedImageBlobs)
-      const audioExt = this.extractExtension(card.audioUrl);
-      const audioBlob = await fetch(card.audioUrl, { mode: 'no-cors' }).then(r => r.blob());
-      const namedAudioBlob = [`${card.word}.${audioExt}`, audioBlob];
-      return {
-        word: card.word,
-        examples: card.examples,
-        namedImageBlobs,
-        namedAudioBlob,
-      };
+      return Promise.all(namedImageBlobsPromises).then(namedImageBlobs => {
+        // TODO: this is returning promises
+        console.log(namedImageBlobs)
+        const audioExt = this.extractExtension(card.audioUrl);
+        return fetch(card.audioUrl, { mode: 'no-cors' }).then(r => r.blob()).then(audioBlob => {
+          const namedAudioBlob = [`${card.word}.${audioExt}`, audioBlob];
+          return {
+            word: card.word,
+            examples: card.examples,
+            namedImageBlobs,
+            namedAudioBlob,
+          };
+        });
+      });
     });
+    return Promise.all(blobbedCardsPromises).then(blobbedCards => {
+      console.log(blobbedCards);
 
-    console.log(blobbedCards)
-
-    const zip = new JSZip();
-    for (const card of blobbedCards) {
-      for (const [path, blob] of card.namedImageBlobs) {
-        zip.file(path, blob);
+      const zip = new JSZip();
+      for (const card of blobbedCards) {
+        for (const [path, blob] of card.namedImageBlobs) {
+          zip.file(path, blob);
+        }
+        const [audioPath, audioBlob] = card.namedAudioBlob;
+        zip.file(audioPath, audioBlob);
       }
-      const [audioPath, audioBlob] = card.namedAudioBlob;
-      zip.file(audioPath, audioBlob);
-    }
 
-    const headerRow = ['Word', 'Picture', 'Gender, Personal Connection, Extra Info (Back side)', 'Pronunciation (Recording and/or IPA)', 'Test Spelling? (y = yes, blank = no)'];
-    const cardRows = blobbedCards.map(card => {
-      const imgs = card.namedImageBlobs.map(([path, b]) => `<img src="${path}">`).join('');
-      const [audioPath, b] = card.namedAudioBlob;
-      const sound = `[sound:${audioPath}]`;
-      const examples = card.examples.join(';');
-      return [card.word, imgs, examples, sound, ''].map(f => `"${f}"`);
+      const headerRow = ['Word', 'Picture', 'Gender, Personal Connection, Extra Info (Back side)', 'Pronunciation (Recording and/or IPA)', 'Test Spelling? (y = yes, blank = no)'];
+      const cardRows = blobbedCards.map(card => {
+        const imgs = card.namedImageBlobs.map(([path, b]) => `<img src="${path}">`).join('');
+        const [audioPath, b] = card.namedAudioBlob;
+        const sound = `[sound:${audioPath}]`;
+        const examples = card.examples.join(';');
+        return [card.word, imgs, examples, sound, ''].map(f => `"${f}"`);
+      });
+      const rows = [headerRow, cardRows];
+      const lines = rows.map(row => row.join(','));
+      const content = lines.join('\n');
+      zip.file('flash_cards.csv', content);
+
+      const type = JSZip.support.uint8array ? 'uint8array': 'string';
+      return zip.generateAsync({ type }).then(zipBlob => {
+        downloadContent('content.zip', zipBlob);
+      });
     });
-    const rows = [headerRow, cardRows];
-    const lines = rows.map(row => row.join(','));
-    const content = lines.join('\n');
-    zip.file('flash_cards.csv', content);
-
-    const zipBlob = await zip.generateAsync();
-    downloadContent('content.zip', zipBlob);
   }
 
   render() {
