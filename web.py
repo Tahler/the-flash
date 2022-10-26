@@ -1,12 +1,15 @@
 import datetime
 from functools import wraps
 import logging
+import os
 import pickle
 import time
 from typing import Mapping, Optional
 
 import bs4
 import requests
+
+from . import constants
 
 _REQUEST_HEADER = {
     'User-Agent': ('Mozilla/5.0 (Windows NT 6.1; WOW64) '
@@ -15,7 +18,7 @@ _REQUEST_HEADER = {
 }
 RETRY_INTERVAL = datetime.timedelta(minutes=5)
 
-CACHE_PATH = 'cache'
+CACHE_PATH = os.path.join(constants.TMP_DIR, 'cache')
 
 
 def memoize(func):

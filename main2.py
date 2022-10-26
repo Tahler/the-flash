@@ -1,10 +1,11 @@
-import abc
 import argparse
 import csv
 import io
 import itertools
+import logging
 import mimetypes
 import os
+import sys
 from typing import Generic, Iterable, List, Sequence, Tuple, TypeVar
 import uuid
 
@@ -19,6 +20,7 @@ T = TypeVar('T')
 NUM_OPTIONS = 5
 
 MEDIA_DIR = 'media'
+TMP_DIR = 'tmp'
 
 
 def _batch(iterable: Iterable[T], n: int) -> List[T]:
@@ -66,8 +68,8 @@ class ScrapedField(Field, Generic[T]):
 
 
 # TODO: Support getting more options.
+# TODO: Sequence T -> List T
 def select_many_from_list(options: Sequence[str]) -> List[int]:
-  # TODO: try writing the file, then opening...
   prefixed_options = '\n'.join(f'{i+1}) {v}' for i, v in enumerate(options))
   print(prefixed_options)
   while True:
@@ -103,6 +105,7 @@ class ImageField(ScrapedField):
 
   @classmethod
   def _get_image(cls, url: str) -> Tuple[Image.Image, str]:
+    print(url)
     response = web.request(url)
     image = Image.open(io.BytesIO(response.content))
     mime_type = response.headers['Content-Type']
@@ -120,18 +123,18 @@ class ImageField(ScrapedField):
   @classmethod
   def choose(cls, options: Iterable[ImageData]) -> str:
     batch = _batch(options, NUM_OPTIONS)
-    for img, _ in batch:
-      img.show()
-    ints = [str(i) for i in range(1, len(batch))]
-    choices = select_many_from_list(ints)
-    chosen_img_exts = [batch[i] for i in choices]
-    paths: List[str] = []
-    for img, ext in chosen_img_exts:
-      file_name = uuid.uuid4().hex + ext
-      path = os.path.join(MEDIA_DIR, file_name)
+    paths = []
+    os.makedirs(TMP_DIR, exist_ok=True)
+    for i, (img, ext) in enumerate(batch, start=1):
+      path = os.path.join(TMP_DIR, f'{i}-{uuid.uuid4().hex}{ext}')
       img.save(path)
+      openable_img = Image.open(path)
+      print(openable_img.format)
+      # openable_img.show()
       paths.append(path)
-    html_tags = [f'<img src="{path}">' for path in paths]
+    choices = select_many_from_list(paths)
+    chosen_paths = [paths[i] for i in choices]
+    html_tags = [f'<img src="{path}">' for path in chosen_paths]
     return ''.join(html_tags)
 
 
@@ -142,6 +145,10 @@ FIELDS: List[Field] = [
 
 
 def main() -> None:
+  logging.basicConfig(stream=sys.stdout,
+                      level=logging.DEBUG,
+                      format='%(levelname)s\t> %(message)s')
+
   parser = argparse.ArgumentParser(
       description="generate a CSV for Anki ingestion")
   # parser.add_argument("word_list_path", type=str, default="freq.txt")
